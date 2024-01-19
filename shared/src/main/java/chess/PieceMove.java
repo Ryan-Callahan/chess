@@ -4,7 +4,7 @@ import java.util.Collection;
 
 public class PieceMove {
 
-    public static Collection<ChessMove> move(ChessPiece.PieceType type,ChessGame.TeamColor pieceColor, Collection<ChessMove> validMoves, ChessPosition startingPosition, ChessBoard board) {
+    public static void move(ChessPiece.PieceType type,ChessGame.TeamColor pieceColor, Collection<ChessMove> validMoves, ChessPosition startingPosition, ChessBoard board) {
         if (type == ChessPiece.PieceType.BISHOP) {
             ChessPosition nextPosition = new ChessPosition(startingPosition.getRow(), startingPosition.getColumn());
             int row = nextPosition.getRow();
