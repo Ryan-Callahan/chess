@@ -66,49 +66,11 @@ public class ChessPiece {
      *
      * @return Collection of valid moves
      */
-    public ArrayList<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        ArrayList<ChessMove> validMoves = new ArrayList<ChessMove>();
+    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+        Collection<ChessMove> validMoves = new ArrayList<ChessMove>();
         ChessPosition startingPosition = new ChessPosition(myPosition.getRow(), myPosition.getColumn());
 
-        if (this.pieceType == PieceType.BISHOP) {
-            ChessPosition nextPosition = new ChessPosition(myPosition.getRow(), myPosition.getColumn());
-            int row = nextPosition.getRow();
-            int col = nextPosition.getColumn();
-
-            int[] cardinality = {1, 8};
-
-            for (int longitude:cardinality) {
-                for (int latitude:cardinality) {
-                    while ((row != latitude) && (col != longitude)) {
-                        if (row > latitude) {
-                            row = row-1;
-                        } else {
-                            row = row+1;
-                        }
-
-                        if (col > latitude) {
-                            col = col-1;
-                        } else {
-                            col = col+1;
-                        }
-
-                        nextPosition = new ChessPosition(row, col);
-                        ChessPiece boardPiece = board.getPiece(nextPosition);
-                        if (boardPiece != null) {
-                            if (boardPiece.getTeamColor() != this.pieceColor) {
-                                validMoves.add(new ChessMove(startingPosition, nextPosition, null));
-                                break;
-                            }
-                            break;
-                        } else {
-                            validMoves.add(new ChessMove(startingPosition, nextPosition, null));
-                        }
-
-                    }
-                }
-            }
-
-        }
+        PieceMove.move(this.getPieceType(), this.getTeamColor(), validMoves, startingPosition, board);
 
         return validMoves;
     }
