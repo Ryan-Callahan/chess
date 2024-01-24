@@ -36,7 +36,7 @@ public class ChessBoard {
                 if (col == null) {
                     rowStr.append("| ");
                 } else {
-                    rowStr.append(String.format("|%s", col.toString()));
+                    rowStr.append(String.format("|%s", col));
                 }
             }
             rowStr.append("|\n");

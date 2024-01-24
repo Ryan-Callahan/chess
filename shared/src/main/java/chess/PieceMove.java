@@ -37,7 +37,7 @@ public class PieceMove {
             ChessPosition nextPosition = new ChessPosition(startingPosition.getRow() + direction[0], startingPosition.getColumn() + direction[1]);
 
             while (nextPosition.isOnBoard()) {
-                if (isOccupied(nextPosition, pieceColor, validMoves, startingPosition, board)) {
+                if (isOccupied(nextPosition, board)) {
                     capture(nextPosition, pieceColor, validMoves, startingPosition, board, null);
                     break;
                 } else {
@@ -52,7 +52,7 @@ public class PieceMove {
         for (int[] direction : directions) {
             ChessPosition nextPosition = new ChessPosition(startingPosition.getRow() + direction[0], startingPosition.getColumn() + direction[1]);
             if (nextPosition.isOnBoard()) {
-                if (isOccupied(nextPosition, pieceColor, validMoves, startingPosition, board)) {
+                if (isOccupied(nextPosition, board)) {
                     if (!isPawn) {
                         capture(nextPosition, pieceColor, validMoves, startingPosition, board, null);
                     } else {break;}
@@ -91,7 +91,7 @@ public class PieceMove {
         for (int[] place : pawnDiagonal) {
             ChessPosition nextPosition = new ChessPosition(startingPosition.getRow() + place[0], startingPosition.getColumn() + place[1]);
             if (nextPosition.isOnBoard()) {
-                if (isOccupied(nextPosition, pieceColor, validMoves, startingPosition, board)) {
+                if (isOccupied(nextPosition, board)) {
                     if (nextPosition.getRow() == 8 || nextPosition.getRow() == 1) {
                         for (var pieceType : possiblePromotions) {
                             capture(nextPosition, pieceColor, validMoves, startingPosition, board, pieceType);
@@ -103,12 +103,10 @@ public class PieceMove {
 
     }
 
-    public static boolean isOccupied(ChessPosition nextPosition, ChessGame.TeamColor pieceColor, Collection<ChessMove> validMoves, ChessPosition startingPosition, ChessBoard board) {
+    public static boolean isOccupied(ChessPosition nextPosition, ChessBoard board) {
         ChessPiece boardPiece = board.getPiece(nextPosition);
-        if (boardPiece != null) { //nextPosition contains another piece
-            return true;
-        }
-        return false;
+        //nextPosition contains another piece or not
+        return boardPiece != null;
     }
 
     public static void capture(ChessPosition nextPosition, ChessGame.TeamColor pieceColor, Collection<ChessMove> validMoves, ChessPosition startingPosition, ChessBoard board, ChessPiece.PieceType promotionPiece) {

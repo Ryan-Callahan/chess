@@ -35,27 +35,14 @@ public class ChessPiece {
 
     @Override
     public String toString() {
-        String str = "";
-        switch (pieceType) {
-            case KING:
-                str = "K";
-                break;
-            case QUEEN:
-                str = "Q";
-                break;
-            case BISHOP:
-                str = "B";
-                break;
-            case KNIGHT:
-                str = "N";
-                break;
-            case ROOK:
-                str = "R";
-                break;
-            case PAWN:
-                str = "P";
-                break;
-        }
+        String str = switch (pieceType) {
+            case KING -> "K";
+            case QUEEN -> "Q";
+            case BISHOP -> "B";
+            case KNIGHT -> "N";
+            case ROOK -> "R";
+            case PAWN -> "P";
+        };
         if (pieceColor == ChessGame.TeamColor.BLACK) {
             return str.toLowerCase();
         } else {
@@ -97,7 +84,7 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        Collection<ChessMove> validMoves = new HashSet<ChessMove>();
+        Collection<ChessMove> validMoves = new HashSet<>();
         ChessPosition startingPosition = new ChessPosition(myPosition.getRow(), myPosition.getColumn());
 
         PieceMove.move(this.getPieceType(), this.getTeamColor(), validMoves, startingPosition, board);
