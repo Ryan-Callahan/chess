@@ -17,6 +17,13 @@ public class ChessPosition {
         this.col = col;
     }
 
+    public boolean isOnBoard() {
+        if (1 <= row  && row <= 8 && 1 <= col && col <= 8) {
+            return true;
+        }
+        return false;
+    }
+
     /**
      * @return which row this position is in
      * 1 codes for the bottom row
