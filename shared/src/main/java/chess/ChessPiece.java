@@ -21,6 +21,19 @@ public class ChessPiece {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChessPiece that = (ChessPiece) o;
+        return pieceColor == that.pieceColor && pieceType == that.pieceType;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(pieceColor, pieceType);
+    }
+
+    @Override
     public String toString() {
         String str = "";
         switch (pieceType) {
@@ -74,19 +87,6 @@ public class ChessPiece {
      */
     public PieceType getPieceType() {
         return this.pieceType;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ChessPiece that = (ChessPiece) o;
-        return pieceColor == that.pieceColor && pieceType == that.pieceType;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(pieceColor, pieceType);
     }
 
     /**
