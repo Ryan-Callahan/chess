@@ -6,43 +6,26 @@ public class PieceMove {
 
     public static void move(ChessPiece.PieceType type,ChessGame.TeamColor pieceColor, Collection<ChessMove> validMoves, ChessPosition startingPosition, ChessBoard board) {
         if (type == ChessPiece.PieceType.BISHOP) {
-            ChessPosition nextPosition = new ChessPosition(startingPosition.getRow(), startingPosition.getColumn());
-            int row = nextPosition.getRow();
-            int col = nextPosition.getColumn();
 
-            int[] cardinality = {1, 8};
+            int[][] directions = {{-1, -1}, {-1, 1}, {1, 1}, {1, -1}};
 
-            for (int longitude : cardinality) {
-                for (int latitude : cardinality) {
-                    while ((row != latitude) && (col != longitude)) {
-                        if (row > latitude) {
-                            row = row - 1;
-                        } else {
-                            row = row + 1;
-                        }
+            for (int[] direction : directions) {
+                ChessPosition nextPosition = new ChessPosition(startingPosition.getRow() + direction[0], startingPosition.getColumn() + direction[1]);
+                int row = nextPosition.getRow();
+                int col = nextPosition.getColumn();
 
-                        if (col > latitude) {
-                            col = col - 1;
-                        } else {
-                            col = col + 1;
-                        }
-
-                        nextPosition = new ChessPosition(row, col);
-                        ChessPiece boardPiece = board.getPiece(nextPosition);
-                        if (boardPiece != null) {
-                            if (boardPiece.getTeamColor() != pieceColor) {
-                                validMoves.add(new ChessMove(startingPosition, nextPosition, null));
-                                break;
-                            }
-                            break;
-                        } else {
+                while (nextPosition.isOnBoard()) {
+                    ChessPiece boardPiece = board.getPiece(nextPosition);
+                    if (boardPiece != null) {
+                        if (boardPiece.getTeamColor() != pieceColor) {
                             validMoves.add(new ChessMove(startingPosition, nextPosition, null));
                         }
-
+                    } else {
+                        validMoves.add(new ChessMove(startingPosition, nextPosition, null));
                     }
+                    nextPosition = new ChessPosition(nextPosition.getRow() + direction[0], nextPosition.getColumn() + direction[1]);
                 }
             }
-
         }
     }
 }
