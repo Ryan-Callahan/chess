@@ -20,6 +20,36 @@ public class ChessPiece {
         this.pieceType = type;
     }
 
+    @Override
+    public String toString() {
+        String str = "";
+        switch (pieceType) {
+            case KING:
+                str = "K";
+                break;
+            case QUEEN:
+                str = "Q";
+                break;
+            case BISHOP:
+                str = "B";
+                break;
+            case KNIGHT:
+                str = "N";
+                break;
+            case ROOK:
+                str = "R";
+                break;
+            case PAWN:
+                str = "P";
+                break;
+        }
+        if (pieceColor == ChessGame.TeamColor.BLACK) {
+            return str.toLowerCase();
+        } else {
+            return str;
+        }
+    }
+
     /**
      * The various different chess piece options
      */
