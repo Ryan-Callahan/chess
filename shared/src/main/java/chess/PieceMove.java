@@ -16,14 +16,15 @@ public class PieceMove {
 
                 while (nextPosition.isOnBoard()) {
                     ChessPiece boardPiece = board.getPiece(nextPosition);
-                    if (boardPiece != null) {
-                        if (boardPiece.getTeamColor() != pieceColor) {
+                    if (boardPiece != null) { //nextPosition contains another piece
+                        if (boardPiece.getTeamColor() != pieceColor) { //add nextPosition if the piece is opposite team
                             validMoves.add(new ChessMove(startingPosition, nextPosition, null));
                         }
-                    } else {
+                        break; //don't continue if the bishop is blocked
+                    } else { //Bishop is unblocked
                         validMoves.add(new ChessMove(startingPosition, nextPosition, null));
                     }
-                    nextPosition = new ChessPosition(nextPosition.getRow() + direction[0], nextPosition.getColumn() + direction[1]);
+                    nextPosition = new ChessPosition(nextPosition.getRow() + direction[0], nextPosition.getColumn() + direction[1]); //continues the iteration
                 }
             }
         }
