@@ -85,10 +85,7 @@ public class ChessPiece {
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> validMoves = new HashSet<>();
-        ChessPosition startingPosition = new ChessPosition(myPosition.getRow(), myPosition.getColumn());
-
-        PieceMove.move(this.getPieceType(), this.getTeamColor(), validMoves, startingPosition, board);
-
+        Rules.possibleMoves(this, board, myPosition, validMoves);
         return validMoves;
     }
 }
