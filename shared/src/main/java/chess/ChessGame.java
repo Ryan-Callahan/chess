@@ -165,7 +165,18 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        for (int r = 1; r <= 8; r++) {
+            for (int c = 1; c <= 8; c++) {
+                ChessPiece piece = board.getPiece(new ChessPosition(r, c));
+                if (piece != null && piece.getTeamColor() == teamColor) {
+                    if (!validMoves(new ChessPosition(r, c)).isEmpty()) {
+                        return false;
+                    }
+                }
+
+            }
+        }
+        return true;
     }
 
     /**
