@@ -83,7 +83,6 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-
         ChessPiece piece = board.getPiece(move.getStartPosition());
         if (piece.getTeamColor() != getTeamTurn()) {
             throw new InvalidMoveException("Invalid Move: Out of Turn");
@@ -99,17 +98,14 @@ public class ChessGame {
             if (move.getPromotionPiece() != null) {
                 piece = new ChessPiece(piece.getTeamColor(), move.getPromotionPiece());
             }
-
             board.addPiece(move.getEndPosition(), piece);
             board.addPiece(move.getStartPosition(), null);
-
 
             if (piece.getTeamColor() == TeamColor.WHITE) {
                 setTeamTurn(TeamColor.BLACK);
             } else {
                 setTeamTurn(TeamColor.WHITE);
             }
-
         } else {
             throw new InvalidMoveException("Invalid Move");
         }
@@ -144,7 +140,21 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        if (isInCheck(teamColor)) {
+            for (int r = 1; r <= 8; r++) {
+                for (int c = 1; c <= 8; c++) {
+                    ChessPiece piece = board.getPiece(new ChessPosition(r, c));
+                    if (piece != null && piece.getTeamColor() == teamColor) {
+                        if (!validMoves(new ChessPosition(r, c)).isEmpty()) {
+                            return false;
+                        }
+                    }
+
+                }
+            }
+            return true;
+        }
+        return false;
     }
 
     /**
