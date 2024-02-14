@@ -17,6 +17,14 @@ public class ChessPosition {
         this.col = col;
     }
 
+    @Override
+    public String toString() {
+        return "ChessPosition{" +
+                "row=" + row +
+                ", col=" + col +
+                '}';
+    }
+
     public boolean isOnBoard() {
         return 1 <= row && row <= 8 && 1 <= col && col <= 8;
     }
