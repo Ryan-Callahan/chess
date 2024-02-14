@@ -54,25 +54,18 @@ public class ChessGame {
             return null;
         } else {
             var moves = piece.pieceMoves(board, startPosition);
-
-            //if team is in check, or if the piece is a king, test move and see if team is unchecked. If so, add move and revert tested change
-            if (isInCheck(piece.getTeamColor()) || piece.getPieceType() == ChessPiece.PieceType.KING) {
-                Collection<ChessMove> uncheckMoves = new HashSet<>();
-                for (var move : moves) {
-                    var capturedPiece = board.getPiece(move.getEndPosition());
-                    board.addPiece(move.getEndPosition(), piece);
-                    board.addPiece(move.getStartPosition(), null);
-                    if (!isInCheck(piece.getTeamColor())) {
-                        uncheckMoves.add(move);
-                    }
-                    board.addPiece(move.getEndPosition(), capturedPiece);
-                    board.addPiece(move.getStartPosition(), piece);
+            Collection<ChessMove> uncheckMoves = new HashSet<>();
+            for (var move : moves) {
+                var capturedPiece = board.getPiece(move.getEndPosition());
+                board.addPiece(move.getEndPosition(), piece);
+                board.addPiece(move.getStartPosition(), null);
+                if (!isInCheck(piece.getTeamColor())) {
+                    uncheckMoves.add(move);
                 }
-                return uncheckMoves;
-            } else {
-                return moves;
+                board.addPiece(move.getEndPosition(), capturedPiece);
+                board.addPiece(move.getStartPosition(), piece);
             }
-
+            return uncheckMoves;
         }
     }
 
