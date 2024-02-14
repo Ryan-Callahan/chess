@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Collection;
+import java.util.HashSet;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -52,7 +53,26 @@ public class ChessGame {
         if (piece == null) {
             return null;
         } else {
-            return piece.pieceMoves(board, startPosition);
+            var moves = piece.pieceMoves(board, startPosition);
+
+            //if team is in check, or if the piece is a king, test move and see if team is unchecked. If so, add move and revert tested change
+            if (isInCheck(piece.getTeamColor()) || piece.getPieceType() == ChessPiece.PieceType.KING) {
+                Collection<ChessMove> uncheckMoves = new HashSet<>();
+                for (var move : moves) {
+                    var capturedPiece = board.getPiece(move.getEndPosition());
+                    board.addPiece(move.getEndPosition(), piece);
+                    board.addPiece(move.getStartPosition(), null);
+                    if (!isInCheck(piece.getTeamColor())) {
+                        uncheckMoves.add(move);
+                    }
+                    board.addPiece(move.getEndPosition(), capturedPiece);
+                    board.addPiece(move.getStartPosition(), piece);
+                }
+                return uncheckMoves;
+            } else {
+                return moves;
+            }
+
         }
     }
 
@@ -63,8 +83,35 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        if (!validMoves(move.getStartPosition()).contains(move)) {
-            throw new InvalidMoveException("Move is invalid.");
+
+        ChessPiece piece = board.getPiece(move.getStartPosition());
+        if (piece.getTeamColor() != getTeamTurn()) {
+            throw new InvalidMoveException("Invalid Move: Out of Turn");
+        }
+
+        boolean valid = false;
+        for (var m : validMoves(move.getStartPosition())) {
+            if (m.equals(move)) {
+                valid = true;
+            }
+        }
+        if (valid) {
+            if (move.getPromotionPiece() != null) {
+                piece = new ChessPiece(piece.getTeamColor(), move.getPromotionPiece());
+            }
+
+            board.addPiece(move.getEndPosition(), piece);
+            board.addPiece(move.getStartPosition(), null);
+
+
+            if (piece.getTeamColor() == TeamColor.WHITE) {
+                setTeamTurn(TeamColor.BLACK);
+            } else {
+                setTeamTurn(TeamColor.WHITE);
+            }
+
+        } else {
+            throw new InvalidMoveException("Invalid Move");
         }
     }
 
@@ -75,7 +122,19 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        for (int r=1;r<=8;r++) {
+            for (int c=1;c<=8;c++) {
+                ChessPiece piece = board.getPiece(new ChessPosition(r, c));
+                if (piece != null && piece.getTeamColor() != teamColor) {
+                    for (var move : piece.pieceMoves(board, new ChessPosition(r, c))) {
+                        if (board.getPiece(move.getEndPosition()) != null && board.getPiece(move.getEndPosition()).getPieceType() == ChessPiece.PieceType.KING) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     /**
