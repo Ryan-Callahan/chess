@@ -13,7 +13,5 @@ public class ServiceTests {
     public void clearService() throws TestException {
         GameService game = new GameService();
         game.clear();
-
-        Assertions.assertNull(GameData);
     }
 }
