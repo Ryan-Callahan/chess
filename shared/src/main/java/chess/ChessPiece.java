@@ -76,7 +76,7 @@ public class ChessPiece {
             case KING:
                 return calculateMoves(board, myPosition, Directions.omniDirections, false);
             case PAWN:
-                return pawnMove(board, myPosition);
+                return calculatePawnMoves(board, myPosition);
         }
         return new HashSet<ChessMove>();
     }
@@ -90,7 +90,7 @@ public class ChessPiece {
                 int newRow = startPosition.getRow() + direction.latitude();
                 int newCol = startPosition.getColumn() + direction.longitude();
                 ChessPosition newPosition = new ChessPosition(newRow, newCol);
-                if (board.isPositionOnBoard(newPosition) && board.getPiece(newPosition).pieceColor != this.pieceColor) {
+                if (board.isPositionOnBoard(newPosition) && board.getPiece(newPosition) != null && board.getPiece(newPosition).pieceColor != this.pieceColor) {
                     moves.add(new ChessMove(startPosition, newPosition, promotionPiece));
                 } else {
                     notBlocked = false;
@@ -104,4 +104,44 @@ public class ChessPiece {
         return calculateMoves(board, startPosition, directions, continuous, type);
     }
 
+    private Collection<ChessMove> calculatePawnMoves(ChessBoard board, ChessPosition startPosition) {
+        HashSet<ChessMove> moves = new HashSet<>();
+        Direction[] directions = Directions.pawnDirections;
+        int vector = (pieceColor == ChessGame.TeamColor.WHITE) ? 1 : -1;
+        PieceType[] possiblePromotions = getPawnPromotions(startPosition);
+        for (Direction direction : directions) {
+            int newRow = startPosition.getRow() + vector * direction.latitude();
+            int newCol = startPosition.getColumn() + direction.longitude();
+            ChessPosition newPosition = new ChessPosition(newRow, newCol);
+            if (board.isPositionOnBoard(newPosition)) {
+                if (direction.longitude() == 0 && board.getPiece(newPosition) == null) {
+                    for (PieceType promotion : possiblePromotions) {
+                        moves.add(new ChessMove(startPosition, newPosition, promotion));
+                    }
+                } else if (direction.longitude() != 0 && board.getPiece(newPosition) != null
+                        && board.getPiece(newPosition).pieceColor != this.pieceColor) {
+                    for (PieceType promotion : possiblePromotions) {
+                        moves.add(new ChessMove(startPosition, newPosition, promotion));
+                    }
+                }
+            }
+        }
+        return moves;
+    }
+
+    private PieceType[] getPawnPromotions(ChessPosition startPosition) {
+        PieceType[] possiblePromotions;
+        if ((pieceColor == ChessGame.TeamColor.WHITE && startPosition.getRow() == 7)
+            || (pieceColor == ChessGame.TeamColor.BLACK && startPosition.getRow() == 2)) {
+            possiblePromotions = new PieceType[]{
+                PieceType.QUEEN,
+                PieceType.ROOK,
+                PieceType.BISHOP,
+                PieceType.KNIGHT
+            };
+        } else {
+            possiblePromotions = new PieceType[]{PieceType.PAWN};
+        }
+        return possiblePromotions;
+    }
 }
