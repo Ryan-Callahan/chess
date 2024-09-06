@@ -1,9 +1,6 @@
 package chess;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Represents a single chess piece
@@ -15,7 +12,7 @@ public class ChessPiece {
     private final ChessGame.TeamColor pieceColor;
     private PieceType type;
 
-    public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
+    public ChessPiece(ChessGame.TeamColor pieceColor, PieceType type) {
         this.pieceColor = pieceColor;
         this.type = type;
     }
@@ -69,31 +66,42 @@ public class ChessPiece {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         switch (type) {
             case ROOK:
-                return null;
+                return calculateMoves(board, myPosition, Directions.lateralDirections, true);
             case BISHOP:
-                return null;
+                return calculateMoves(board, myPosition, Directions.diagonalDirections, true);
             case QUEEN:
-                return null;
+                return calculateMoves(board, myPosition, Directions.omniDirections, true);
             case KNIGHT:
-                return null;
+                return calculateMoves(board, myPosition, Directions.knightDirections, false);
             case KING:
-                return null;
+                return calculateMoves(board, myPosition, Directions.omniDirections, false);
             case PAWN:
-                return null;
+                return pawnMove(board, myPosition);
         }
         return new HashSet<ChessMove>();
     }
 
-    private Collection<ChessMove> calculateMoves(ChessPosition startPosition, ArrayList<Integer> vectors, Boolean continuous) {
-        //for each vector
-        //  repeat if continuous
-        //      if destination is on board && piece at destination is capturable
-        //          add position to collection
-        //      else
-        //          dont add position and break loop
-        //return collection of moves
+    private Collection<ChessMove> calculateMoves(ChessBoard board, ChessPosition startPosition, Direction[] directions, Boolean continuous, PieceType promotionPiece) {
         HashSet<ChessMove> moves = new HashSet<>();
-
+        Boolean notBlocked;
+        for (Direction direction : directions) {
+            notBlocked = continuous;
+            do {
+                int newRow = startPosition.getRow() + direction.latitude();
+                int newCol = startPosition.getColumn() + direction.longitude();
+                ChessPosition newPosition = new ChessPosition(newRow, newCol);
+                if (board.isPositionOnBoard(newPosition) && board.getPiece(newPosition).pieceColor != this.pieceColor) {
+                    moves.add(new ChessMove(startPosition, newPosition, promotionPiece));
+                } else {
+                    notBlocked = false;
+                }
+            } while (notBlocked);
+        }
         return moves;
     }
+
+    private Collection<ChessMove> calculateMoves(ChessBoard board, ChessPosition startPosition, Direction[] directions, Boolean continuous) {
+        return calculateMoves(board, startPosition, directions, continuous, type);
+    }
+
 }
