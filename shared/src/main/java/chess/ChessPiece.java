@@ -124,7 +124,6 @@ public class ChessPiece {
                             }
                         }
                     }
-
                 } else {
                     if (board.getPiece(newPosition) != null
                             && board.getPiece(newPosition).pieceColor != this.pieceColor) {
