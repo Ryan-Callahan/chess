@@ -74,27 +74,32 @@ public class ChessPiece {
         };
     }
 
-    private Collection<ChessMove> calculateMoves(ChessBoard board, ChessPosition startPosition, Direction[] directions, Boolean continuous, PieceType promotionPiece) {
+    private Collection<ChessMove> calculateMoves(ChessBoard board, ChessPosition startPosition, Direction[] directions, Boolean continuous) {
         HashSet<ChessMove> moves = new HashSet<>();
         Boolean notBlocked;
         for (Direction direction : directions) {
+            int newRow = startPosition.getRow();
+            int newCol = startPosition.getColumn();
             notBlocked = continuous;
             do {
-                int newRow = startPosition.getRow() + direction.latitude();
-                int newCol = startPosition.getColumn() + direction.longitude();
+                 newRow = newRow + direction.latitude();
+                 newCol = newCol + direction.longitude();
                 ChessPosition newPosition = new ChessPosition(newRow, newCol);
-                if (board.isPositionOnBoard(newPosition) && board.getPiece(newPosition) != null && board.getPiece(newPosition).pieceColor != this.pieceColor) {
-                    moves.add(new ChessMove(startPosition, newPosition, promotionPiece));
+                if (board.isPositionOnBoard(newPosition)) {
+                    if (board.getPiece(newPosition) != null) {
+                        if (board.getPiece(newPosition).pieceColor != this.pieceColor) {
+                            moves.add(new ChessMove(startPosition, newPosition, null));
+                        }
+                        notBlocked = false;
+                    } else {
+                        moves.add(new ChessMove(startPosition, newPosition, null));
+                    }
                 } else {
                     notBlocked = false;
                 }
             } while (notBlocked);
         }
         return moves;
-    }
-
-    private Collection<ChessMove> calculateMoves(ChessBoard board, ChessPosition startPosition, Direction[] directions, Boolean continuous) {
-        return calculateMoves(board, startPosition, directions, continuous, type);
     }
 
     private Collection<ChessMove> calculatePawnMoves(ChessBoard board, ChessPosition startPosition) {
