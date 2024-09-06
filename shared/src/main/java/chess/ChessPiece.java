@@ -112,14 +112,25 @@ public class ChessPiece {
             int newCol = startPosition.getColumn() + direction.longitude();
             ChessPosition newPosition = new ChessPosition(newRow, newCol);
             if (board.isPositionOnBoard(newPosition)) {
-                if (direction.longitude() == 0 && board.getPiece(newPosition) == null) {
-                    for (PieceType promotion : possiblePromotions) {
-                        moves.add(new ChessMove(startPosition, newPosition, promotion));
+                if (direction.longitude() == 0) {
+                    if (board.getPiece(newPosition) == null) {
+                        for (PieceType promotion : possiblePromotions) {
+                            moves.add(new ChessMove(startPosition, newPosition, promotion));
+                        }
+                        if (!pawnHasMoved(startPosition)) {
+                            newPosition = new ChessPosition(startPosition.getRow() + 2 * vector, startPosition.getColumn());
+                            if (board.getPiece(newPosition) == null) {
+                                moves.add(new ChessMove(startPosition, newPosition, null));
+                            }
+                        }
                     }
-                } else if (direction.longitude() != 0 && board.getPiece(newPosition) != null
-                        && board.getPiece(newPosition).pieceColor != this.pieceColor) {
-                    for (PieceType promotion : possiblePromotions) {
-                        moves.add(new ChessMove(startPosition, newPosition, promotion));
+
+                } else {
+                    if (board.getPiece(newPosition) != null
+                            && board.getPiece(newPosition).pieceColor != this.pieceColor) {
+                        for (PieceType promotion : possiblePromotions) {
+                            moves.add(new ChessMove(startPosition, newPosition, promotion));
+                        }
                     }
                 }
             }
@@ -138,8 +149,13 @@ public class ChessPiece {
                 PieceType.KNIGHT
             };
         } else {
-            possiblePromotions = new PieceType[]{PieceType.PAWN};
+            possiblePromotions = new PieceType[]{null};
         }
         return possiblePromotions;
+    }
+
+    private Boolean pawnHasMoved(ChessPosition position) {
+        return ((pieceColor == ChessGame.TeamColor.WHITE && position.getRow() != 2)
+                || (pieceColor == ChessGame.TeamColor.BLACK && position.getRow() != 7));
     }
 }
