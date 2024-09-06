@@ -1,6 +1,8 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Objects;
 
 /**
@@ -65,6 +67,33 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not implemented");
+        switch (type) {
+            case ROOK:
+                return null;
+            case BISHOP:
+                return null;
+            case QUEEN:
+                return null;
+            case KNIGHT:
+                return null;
+            case KING:
+                return null;
+            case PAWN:
+                return null;
+        }
+        return new HashSet<ChessMove>();
+    }
+
+    private Collection<ChessMove> calculateMoves(ChessPosition startPosition, ArrayList<Integer> vectors, Boolean continuous) {
+        //for each vector
+        //  repeat if continuous
+        //      if destination is on board && piece at destination is capturable
+        //          add position to collection
+        //      else
+        //          dont add position and break loop
+        //return collection of moves
+        HashSet<ChessMove> moves = new HashSet<>();
+
+        return moves;
     }
 }
