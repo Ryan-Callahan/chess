@@ -108,7 +108,7 @@ public class ChessPiece {
         int vector = (pieceColor == ChessGame.TeamColor.WHITE) ? 1 : -1;
         PieceType[] possiblePromotions = getPawnPromotions(startPosition);
         for (Direction direction : directions) {
-            int newRow = startPosition.getRow() + vector * direction.latitude();
+            int newRow = startPosition.getRow() + vector;
             int newCol = startPosition.getColumn() + direction.longitude();
             ChessPosition newPosition = new ChessPosition(newRow, newCol);
             if (board.isPositionOnBoard(newPosition)) {
@@ -118,7 +118,7 @@ public class ChessPiece {
                             moves.add(new ChessMove(startPosition, newPosition, promotion));
                         }
                         if (!pawnHasMoved(startPosition)) {
-                            newPosition = new ChessPosition(startPosition.getRow() + 2 * vector, startPosition.getColumn());
+                            newPosition = new ChessPosition(newRow + vector, newCol);
                             if (board.getPiece(newPosition) == null) {
                                 moves.add(new ChessMove(startPosition, newPosition, null));
                             }
