@@ -66,7 +66,9 @@ public class ChessBoard {
      * @param col
      * @return true if the position is on the board
      */
-    public Boolean isPositionOnBoard(int row, int col) {
+    public static Boolean isPositionOnBoard(ChessPosition position) {
+        int row = position.getRow();
+        int col = position.getColumn();
         return (row >= 1 && row <= 8) && (col >= 1 && col <= 8);
     }
 
