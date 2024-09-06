@@ -60,6 +60,17 @@ public class ChessBoard {
     }
 
     /**
+     * Returns if a possible position is on the board
+     *
+     * @param row
+     * @param col
+     * @return true if the position is on the board
+     */
+    public Boolean isPositionOnBoard(int row, int col) {
+        return (row >= 1 && row <= 8) && (col >= 1 && col <= 8);
+    }
+
+    /**
      * Sets the board to the default starting board
      * (How the game of chess normally starts)
      */
