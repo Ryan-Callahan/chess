@@ -10,7 +10,7 @@ import java.util.*;
  */
 public class ChessPiece {
     private final ChessGame.TeamColor pieceColor;
-    private PieceType type;
+    private final PieceType type;
 
     public ChessPiece(ChessGame.TeamColor pieceColor, PieceType type) {
         this.pieceColor = pieceColor;
@@ -64,21 +64,14 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        switch (type) {
-            case ROOK:
-                return calculateMoves(board, myPosition, Directions.lateralDirections, true);
-            case BISHOP:
-                return calculateMoves(board, myPosition, Directions.diagonalDirections, true);
-            case QUEEN:
-                return calculateMoves(board, myPosition, Directions.omniDirections, true);
-            case KNIGHT:
-                return calculateMoves(board, myPosition, Directions.knightDirections, false);
-            case KING:
-                return calculateMoves(board, myPosition, Directions.omniDirections, false);
-            case PAWN:
-                return calculatePawnMoves(board, myPosition);
-        }
-        return new HashSet<ChessMove>();
+        return switch (type) {
+            case ROOK -> calculateMoves(board, myPosition, Directions.lateralDirections, true);
+            case BISHOP -> calculateMoves(board, myPosition, Directions.diagonalDirections, true);
+            case QUEEN -> calculateMoves(board, myPosition, Directions.omniDirections, true);
+            case KNIGHT -> calculateMoves(board, myPosition, Directions.knightDirections, false);
+            case KING -> calculateMoves(board, myPosition, Directions.omniDirections, false);
+            case PAWN -> calculatePawnMoves(board, myPosition);
+        };
     }
 
     private Collection<ChessMove> calculateMoves(ChessBoard board, ChessPosition startPosition, Direction[] directions, Boolean continuous, PieceType promotionPiece) {
