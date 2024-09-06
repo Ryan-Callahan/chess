@@ -137,10 +137,10 @@ public class ChessPiece {
         return moves;
     }
 
-    private PieceType[] getPawnPromotions(ChessPosition startPosition) {
+    private PieceType[] getPawnPromotions(ChessPosition position) {
         PieceType[] possiblePromotions;
-        if ((pieceColor == ChessGame.TeamColor.WHITE && startPosition.getRow() == 7)
-            || (pieceColor == ChessGame.TeamColor.BLACK && startPosition.getRow() == 2)) {
+        if ((pieceColor == ChessGame.TeamColor.WHITE && position.getRow() == 7)
+            || (pieceColor == ChessGame.TeamColor.BLACK && position.getRow() == 2)) {
             possiblePromotions = new PieceType[]{
                 PieceType.QUEEN,
                 PieceType.ROOK,
