@@ -62,11 +62,10 @@ public class ChessBoard {
     /**
      * Returns if a possible position is on the board
      *
-     * @param row
-     * @param col
+     * @param position The position being checked
      * @return true if the position is on the board
      */
-    public static Boolean isPositionOnBoard(ChessPosition position) {
+    public Boolean isPositionOnBoard(ChessPosition position) {
         int row = position.getRow();
         int col = position.getColumn();
         return (row >= 1 && row <= 8) && (col >= 1 && col <= 8);
