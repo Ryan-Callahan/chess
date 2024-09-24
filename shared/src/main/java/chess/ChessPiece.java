@@ -65,96 +65,12 @@ public class ChessPiece {
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         return switch (type) {
-            case ROOK -> calculateMoves(board, myPosition, Directions.lateralDirections, true);
-            case BISHOP -> calculateMoves(board, myPosition, Directions.diagonalDirections, true);
-            case QUEEN -> calculateMoves(board, myPosition, Directions.omniDirections, true);
-            case KNIGHT -> calculateMoves(board, myPosition, Directions.knightDirections, false);
-            case KING -> calculateMoves(board, myPosition, Directions.omniDirections, false);
-            case PAWN -> calculatePawnMoves(board, myPosition);
+            case ROOK -> PieceMoveService.calculateMoves(board, myPosition, Directions.lateralDirections, true);
+            case BISHOP -> PieceMoveService.calculateMoves(board, myPosition, Directions.diagonalDirections, true);
+            case QUEEN -> PieceMoveService.calculateMoves(board, myPosition, Directions.omniDirections, true);
+            case KNIGHT -> PieceMoveService.calculateMoves(board, myPosition, Directions.knightDirections);
+            case KING -> PieceMoveService.calculateMoves(board, myPosition, Directions.omniDirections);
+            case PAWN -> PieceMoveService.calculatePawnMoves(board, myPosition, Directions.pawnDirections);
         };
-    }
-
-    private Collection<ChessMove> calculateMoves(ChessBoard board, ChessPosition startPosition, Direction[] directions, Boolean continuous) {
-        HashSet<ChessMove> moves = new HashSet<>();
-        Boolean notBlocked;
-        for (Direction direction : directions) {
-            int newRow = startPosition.getRow();
-            int newCol = startPosition.getColumn();
-            notBlocked = continuous;
-            do {
-                 newRow = newRow + direction.latitude();
-                 newCol = newCol + direction.longitude();
-                ChessPosition newPosition = new ChessPosition(newRow, newCol);
-                if (board.isPositionOnBoard(newPosition)) {
-                    if (board.getPiece(newPosition) != null) {
-                        if (board.getPiece(newPosition).pieceColor != this.pieceColor) {
-                            moves.add(new ChessMove(startPosition, newPosition, null));
-                        }
-                        notBlocked = false;
-                    } else {
-                        moves.add(new ChessMove(startPosition, newPosition, null));
-                    }
-                } else {
-                    notBlocked = false;
-                }
-            } while (notBlocked);
-        }
-        return moves;
-    }
-
-    private Collection<ChessMove> calculatePawnMoves(ChessBoard board, ChessPosition startPosition) {
-        HashSet<ChessMove> moves = new HashSet<>();
-        Direction[] directions = Directions.pawnDirections;
-        int vector = (pieceColor == ChessGame.TeamColor.WHITE) ? 1 : -1;
-        PieceType[] possiblePromotions = getPawnPromotions(startPosition);
-        for (Direction direction : directions) {
-            int newRow = startPosition.getRow() + vector;
-            int newCol = startPosition.getColumn() + direction.longitude();
-            ChessPosition newPosition = new ChessPosition(newRow, newCol);
-            if (board.isPositionOnBoard(newPosition)) {
-                if (direction.longitude() == 0) {
-                    if (board.getPiece(newPosition) == null) {
-                        for (PieceType promotion : possiblePromotions) {
-                            moves.add(new ChessMove(startPosition, newPosition, promotion));
-                        }
-                        if (!pawnHasMoved(startPosition)) {
-                            newPosition = new ChessPosition(newRow + vector, newCol);
-                            if (board.getPiece(newPosition) == null) {
-                                moves.add(new ChessMove(startPosition, newPosition, null));
-                            }
-                        }
-                    }
-                } else {
-                    if (board.getPiece(newPosition) != null
-                            && board.getPiece(newPosition).pieceColor != this.pieceColor) {
-                        for (PieceType promotion : possiblePromotions) {
-                            moves.add(new ChessMove(startPosition, newPosition, promotion));
-                        }
-                    }
-                }
-            }
-        }
-        return moves;
-    }
-
-    private PieceType[] getPawnPromotions(ChessPosition position) {
-        PieceType[] possiblePromotions;
-        if ((pieceColor == ChessGame.TeamColor.WHITE && position.getRow() == 7)
-            || (pieceColor == ChessGame.TeamColor.BLACK && position.getRow() == 2)) {
-            possiblePromotions = new PieceType[]{
-                PieceType.QUEEN,
-                PieceType.ROOK,
-                PieceType.BISHOP,
-                PieceType.KNIGHT
-            };
-        } else {
-            possiblePromotions = new PieceType[]{null};
-        }
-        return possiblePromotions;
-    }
-
-    private Boolean pawnHasMoved(ChessPosition position) {
-        return ((pieceColor == ChessGame.TeamColor.WHITE && position.getRow() != 2)
-                || (pieceColor == ChessGame.TeamColor.BLACK && position.getRow() != 7));
     }
 }

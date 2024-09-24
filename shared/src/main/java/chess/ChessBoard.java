@@ -11,18 +11,12 @@ import java.util.Objects;
  */
 public class ChessBoard {
     //chessBoard is (row, column)
-    private final HashMap<Integer, HashMap<Integer, ChessPiece>> chessBoard = new HashMap<>() {{
-        for (int i = 1; i <= 8; i++) {
-            put(i, new HashMap<>() {{
-                for (int j = 1; j <= 8; j++) {
-                    put(j, null);
-                }
-            }});
-        }
-    }};
+    private final HashMap<Integer, HashMap<Integer, ChessPiece>> chessBoard = new HashMap<>();
 
     public ChessBoard() {
-
+        for (int i = 1; i <= 8; i++) {
+            chessBoard.put(i, new HashMap<>());
+        }
     }
 
     @Override
@@ -60,18 +54,6 @@ public class ChessBoard {
     }
 
     /**
-     * Returns if a possible position is on the board
-     *
-     * @param position The position being checked
-     * @return true if the position is on the board
-     */
-    public Boolean isPositionOnBoard(ChessPosition position) {
-        int row = position.getRow();
-        int col = position.getColumn();
-        return (row >= 1 && row <= 8) && (col >= 1 && col <= 8);
-    }
-
-    /**
      * Sets the board to the default starting board
      * (How the game of chess normally starts)
      */
@@ -87,31 +69,18 @@ public class ChessBoard {
             row.put(7, new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT));
             row.put(8, new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK));
         }
-        row = chessBoard.get(2); {
-            row.put(1, new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN));
-            row.put(2, new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN));
-            row.put(3, new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN));
-            row.put(4, new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN));
-            row.put(5, new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN));
-            row.put(6, new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN));
-            row.put(7, new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN));
-            row.put(8, new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN));
+        row = chessBoard.get(2);
+        for (int i = 1; i <= 8; i++) {
+            row.put(i, new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN));
         }
-        for (int i = 3; i < 7; i++) {
-            row = chessBoard.get(i);
+        for (int i = 3; i <= 6; i++) {
             for (int j = 1; j <= 8; j++) {
-                row.put(j, null);
+                chessBoard.put(i, new HashMap<>());
             }
         }
-        row = chessBoard.get(7); {
-            row.put(1, new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN));
-            row.put(2, new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN));
-            row.put(3, new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN));
-            row.put(4, new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN));
-            row.put(5, new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN));
-            row.put(6, new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN));
-            row.put(7, new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN));
-            row.put(8, new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN));
+        row = chessBoard.get(7);
+        for (int i = 1; i <= 8; i++) {
+            row.put(i, new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN));
         }
         row = chessBoard.get(8); {
             row.put(1, new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK));

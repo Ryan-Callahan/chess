@@ -1,5 +1,10 @@
 package chess;
 
+/**
+ * A class that holds all possible directions any piece can move in one place.
+ * All methods are static, allowing them to be referenced anywhere while avoiding
+ * having copies of the same lists in every piece object
+ */
 public class Directions {
     public static Direction[] lateralDirections = {
         new Direction(1, 0),
