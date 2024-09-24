@@ -8,6 +8,7 @@ I wish everything was written in Scala :(
 - [Chess Game](#chess-game)
 - [Chess Move](#chess-move)
 - [Chess Piece](#chess-piece)
+- [PieceMoveService](#piecemoveservice)
 - [Chess Position](#chess-position)
 - [Directions/Direction](#directionsdirection)
 
@@ -40,6 +41,10 @@ ChessMove uses these attributes to contain information about valid moves
 takes a ChessBoard and a ChessPosition, determines the proper [Directions](#directionsdirection)
 for each type of piece. It then passes that information to calculateMoves, or to calculatePawnMoves for pawns.
 
+
+## PieceMoveService
+
+
 ### calculateMoves()
 follows the pseudocode:
 ```
@@ -54,7 +59,7 @@ for each direction a piece can move:
 ```
 
 ### calculatePawnMoves()
-uses the methods [getPawnPromotions()](#getpawnpromotions) and [pawnHasMoved()](#pawnhasmoved) to help 
+uses the methods addPawnMove() and pawnHasMoved() to help 
 determine if a move is valid. The method follows the pseudocode:
 ```
 for each direction a pawn can move:
@@ -66,25 +71,17 @@ for each direction a pawn can move:
                 add the move to the list of moves.
 ```
 
-### getPawnPromotions()
-takes the position of the pawn and returns either a list of possible promotions, or a list containing null.
-Used when determining if a pawn can promote or not, and then adding all the possible promotions to the list
-of moves.
-
-### pawnHasMoved()
-returns false if the pawn is still in its initial row, returns true otherwise.
-
 ## Chess Position
 - row
 - col
 
 ## Directions/Direction
 ### Direction
-- latitude
-- longitude
+- yVector
+- xVector
 
 A simple record that represents a direction in which a chess piece would move. Would've named the class
-vector if that wasn't already a standard library.
+vector if that wasn't already a standard library. yVector moves along rows, xVector moves along columns.
 
 ```
 "mom can we have case class?"
