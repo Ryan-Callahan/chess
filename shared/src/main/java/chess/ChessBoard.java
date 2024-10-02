@@ -60,6 +60,16 @@ public class ChessBoard {
     }
 
     /**
+     * Returns a copy of the requested team set
+     *
+     * @param teamColor the color of the requested team
+     * @return a Set of ChessPieces
+     */
+    public Set<ChessPiece> getTeamSet(ChessGame.TeamColor teamColor) {
+        return Set.copyOf((teamColor == ChessGame.TeamColor.WHITE) ? whitePieces : blackPieces);
+    }
+
+    /**
      * Sets the board to the default starting board
      * (How the game of chess normally starts)
      */
