@@ -1,8 +1,17 @@
 # Table of Contents
 I wish everything was written in Scala :(
-1. [Chess Moves (shared\\...\\chess)](#chess)
+1. [Chess (shared\\...\\chess)](#notes/shared.md)
+2. [Server](#server)
+3. [Client](#client)
+4. [README](README.md)
 
-# Chess
+---
+
+---
+
+# Shared
+
+## The Game of Chess
 
 - [Chess Board](#chess-board)
 - [Chess Game](#chess-game)
@@ -11,6 +20,8 @@ I wish everything was written in Scala :(
 - [PieceMoveService](#piecemoveservice)
 - [Chess Position](#chess-position)
 - [Directions/Direction](#directionsdirection)
+
+---
 
 ## Chess Board
 - chessBoard 
@@ -21,7 +32,11 @@ I wish everything was written in Scala :(
 and returns true/false depending on if that position is on the board or not. 
 - The resetBoard() method is also used to restart a game of chess.
 
+---
+
 ## Chess Game
+
+---
 
 ## Chess Move
 - startPosition
@@ -30,20 +45,20 @@ and returns true/false depending on if that position is on the board or not.
 
 ChessMove uses these attributes to contain information about valid moves
 
+---
 
 ## Chess Piece
 - pieceColor
 - type
 - pieceMoves() provides the logic for all types of pieces
 
-
 ### pieceMoves() 
 takes a ChessBoard and a ChessPosition, determines the proper [Directions](#directionsdirection)
 for each type of piece. It then passes that information to calculateMoves, or to calculatePawnMoves for pawns.
 
+---
 
 ## PieceMoveService
-
 
 ### calculateMoves()
 follows the pseudocode:
@@ -70,12 +85,16 @@ for each direction a pawn can move:
             if there is a capturable piece diagonal to the pawn:
                 add the move to the list of moves.
 ```
+---
 
 ## Chess Position
 - row
 - col
 
+---
+
 ## Directions/Direction
+
 ### Direction
 - yVector
 - xVector
@@ -99,3 +118,8 @@ case class at home:
 Directions is a static class (companion to the Direction record) that contains arrays of Direction objects 
 so there is a common location for all ChessPieces to reference when determining valid moves. Every attribute
 is made static so they can be referenced without initializing the class as an object.
+
+---
+
+---
+
