@@ -59,6 +59,7 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
         ChessPiece piece = board.getPiece(move.getStartPosition());
+        //TODO move is illegal if the chess piece cannot move there, if the move leaves the team’s king in danger, or if it’s not the corresponding team's turn
         if (move.getPromotionPiece() != null) piece.setPieceType(move.getPromotionPiece());
         movePiece(move, piece);
     }
