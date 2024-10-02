@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Collection;
+import java.util.Set;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -9,9 +10,9 @@ import java.util.Collection;
  * signature of the existing methods.
  */
 public class ChessGame {
-    private ChessBoard board;
+    private ChessBoard board = new ChessBoard();
+
     public ChessGame() {
-        board = new ChessBoard();
         board.resetBoard();
     }
 
@@ -59,7 +60,18 @@ public class ChessGame {
     public void makeMove(ChessMove move) throws InvalidMoveException {
         ChessPiece piece = board.getPiece(move.getStartPosition());
         if (move.getPromotionPiece() != null) piece.setPieceType(move.getPromotionPiece());
+        movePiece(move, piece);
+    }
+
+    /**
+     * Moves a piece according to the provided move
+     *
+     * @param move the move to be made
+     * @param piece the piece to be moved
+     */
+    private void movePiece(ChessMove move, ChessPiece piece) {
         board.addPiece(move.getEndPosition(), piece);
+        board.removePiece(move.getStartPosition());
     }
 
     /**
@@ -69,7 +81,17 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        Set<ChessPosition> team = board.getTeamSet((teamColor == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE);
+        for (ChessPosition position : team) {
+            ChessPiece piece = board.getPiece(position);
+            for (ChessMove move : piece.pieceMoves(board, position)) {
+                if (board.getPiece(move.getEndPosition()) != null
+                        && board.getPiece(move.getEndPosition()).getPieceType() == ChessPiece.PieceType.KING) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -79,7 +101,34 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        Set<ChessPosition> team  = board.getTeamSet(teamColor);
+        for (ChessPosition position : team) {
+            ChessPiece piece = board.getPiece(position);
+            for (ChessMove move : piece.pieceMoves(board, position)) {
+                if (!isInCheckAfterMove(move, teamColor)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Calculates if a team would still be in check after a move
+     *
+     * @param move the move to be made
+     * @param teamColor the team being checked
+     * @return true if the team is still in check after a move
+     */
+    private boolean isInCheckAfterMove(ChessMove move, TeamColor teamColor) {
+        ChessPiece movedPiece = board.getPiece(move.getStartPosition());
+        ChessPiece removedPiece = board.getPiece(move.getEndPosition());
+        ChessMove reversedMove = new ChessMove(move.getEndPosition(), move.getStartPosition(), null);
+        movePiece(move, movedPiece);
+        boolean inCheck = (isInCheck(teamColor));
+        movePiece(reversedMove, movedPiece);
+        board.addPiece(move.getEndPosition(), removedPiece);
+        return inCheck;
     }
 
     /**
