@@ -1,6 +1,6 @@
 # Table of Contents
 I wish everything was written in Scala :(
-1. [Chess (shared\\...\\chess)](#shared)
+1. [Shared](#shared)
 2. [Server](#server)
 3. [Client](#client)
 4. [README](README.md)
