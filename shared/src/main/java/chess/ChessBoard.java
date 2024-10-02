@@ -1,7 +1,9 @@
 package chess;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * A chessboard that can hold and rearrange chess pieces.
@@ -12,6 +14,8 @@ import java.util.Objects;
 public class ChessBoard {
     //chessBoard is (row, column)
     private final HashMap<Integer, HashMap<Integer, ChessPiece>> chessBoard = new HashMap<>();
+    private Set<ChessPiece> whitePieces = new HashSet<>();
+    private Set<ChessPiece> blackPieces = new HashSet<>();
 
     public ChessBoard() {
         for (int i = 1; i <= 8; i++) {
@@ -33,12 +37,14 @@ public class ChessBoard {
     }
 
     /**
-     * Adds a chess piece to the chessboard
+     * Adds a chess piece to the chessboard. If the new piece is replacing a piece,
+     * removes old piece from its team hash set.
      *
      * @param position where to add the piece to
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
+        if (getPiece(position) != null) removePieceFromTeam(getPiece(position));
         chessBoard.get(position.getRow()).put(position.getColumn(), piece);
     }
 
@@ -91,6 +97,46 @@ public class ChessBoard {
             row.put(6, new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP));
             row.put(7, new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT));
             row.put(8, new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK));
+        }
+        resetTeams();
+    }
+
+    /**
+     * Removes a piece from its corresponding team.
+     *
+     * @param piece the piece to remove
+     */
+    private void removePieceFromTeam(ChessPiece piece) {
+        if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+            whitePieces.remove(piece);
+        } else {
+            blackPieces.remove(piece);
+        }
+    }
+
+    /**
+     * adds a piece to its corresponding team.
+     *
+     * @param piece the piece to add
+     */
+    private void addPieceToTeam(ChessPiece piece) {
+        if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+            whitePieces.add(piece);
+        } else {
+            blackPieces.add(piece);
+        }
+    }
+
+    /**
+     * Resets the team hash sets to contain all the pieces currently on the board.
+     */
+    private void resetTeams() {
+        whitePieces.clear();
+        blackPieces.clear();
+        for (HashMap<Integer, ChessPiece> row : chessBoard.values()) {
+            for (ChessPiece piece : row.values()) {
+                addPieceToTeam(piece);
+            }
         }
     }
 }
