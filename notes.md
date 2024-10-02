@@ -69,11 +69,11 @@ Relies on isInCheckAfterMove to determine if the team would still be in check af
   - a hashset of all positions the white team holds
 - blackPieces
   - a hashset of all positions the black team holds
-- [addPiece()](#addpiece)
-- [removePiece()](#removepiece)
-- [getPiece()](#getpiece)
-- [getTeamSet()](#getteamset)
-- [resetBoard()](#resetboard)
+- addPiece()
+- removePiece()
+- getPiece()
+  getTeamSet()
+- resetBoard()
 
 ### addPiece()
 adds the given piece to the given position. If the position is not empty beforehand, it calls removePiece \
