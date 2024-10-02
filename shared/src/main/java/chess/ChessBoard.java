@@ -14,8 +14,8 @@ import java.util.Set;
 public class ChessBoard {
     //chessBoard is (row, column)
     private final HashMap<Integer, HashMap<Integer, ChessPiece>> chessBoard = new HashMap<>();
-    private Set<ChessPiece> whitePieces = new HashSet<>();
-    private Set<ChessPiece> blackPieces = new HashSet<>();
+    private final Set<ChessPosition> whitePieces = new HashSet<>();
+    private final Set<ChessPosition> blackPieces = new HashSet<>();
 
     public ChessBoard() {
         for (int i = 1; i <= 8; i++) {
@@ -38,14 +38,25 @@ public class ChessBoard {
 
     /**
      * Adds a chess piece to the chessboard. If the new piece is replacing a piece,
-     * removes old piece from its team hash set.
+     * removes old piece from its team.
      *
      * @param position where to add the piece to
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        if (getPiece(position) != null) removePieceFromTeam(getPiece(position));
+        if (getPiece(position) != null) removePositionFromTeam(position);
         chessBoard.get(position.getRow()).put(position.getColumn(), piece);
+        if (piece != null) addPositionToTeam(position);
+    }
+
+    /**
+     * Removes a piece from the board by replacing it with null.
+     *
+     * @param position the position to replace with null.
+     */
+    public void removePiece(ChessPosition position) {
+        removePositionFromTeam(position);
+        addPiece(position, null);
     }
 
     /**
@@ -60,12 +71,12 @@ public class ChessBoard {
     }
 
     /**
-     * Returns a copy of the requested team set
+     * Returns a copy of the requested team
      *
      * @param teamColor the color of the requested team
-     * @return a Set of ChessPieces
+     * @return a Set of ChessPositions
      */
-    public Set<ChessPiece> getTeamSet(ChessGame.TeamColor teamColor) {
+    public Set<ChessPosition> getTeamSet(ChessGame.TeamColor teamColor) {
         return Set.copyOf((teamColor == ChessGame.TeamColor.WHITE) ? whitePieces : blackPieces);
     }
 
@@ -112,40 +123,42 @@ public class ChessBoard {
     }
 
     /**
-     * Removes a piece from its corresponding team.
+     * Removes a position from its corresponding team.
      *
-     * @param piece the piece to remove
+     * @param position the position to remove
      */
-    private void removePieceFromTeam(ChessPiece piece) {
+    private void removePositionFromTeam(ChessPosition position) {
+        ChessPiece piece = getPiece(position);
         if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
-            whitePieces.remove(piece);
+            whitePieces.remove(position);
         } else {
-            blackPieces.remove(piece);
+            blackPieces.remove(position);
         }
     }
 
     /**
-     * adds a piece to its corresponding team.
+     * adds the position to its corresponding team.
      *
-     * @param piece the piece to add
+     * @param position the position of the piece
      */
-    private void addPieceToTeam(ChessPiece piece) {
+    private void addPositionToTeam(ChessPosition position) {
+        ChessPiece piece = getPiece(position);
         if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
-            whitePieces.add(piece);
+            whitePieces.add(position);
         } else {
-            blackPieces.add(piece);
+            blackPieces.add(position);
         }
     }
 
     /**
-     * Resets the team hash sets to contain all the pieces currently on the board.
+     * Resets the team hash sets to contain all the positions currently on the board.
      */
     private void resetTeams() {
         whitePieces.clear();
         blackPieces.clear();
-        for (HashMap<Integer, ChessPiece> row : chessBoard.values()) {
-            for (ChessPiece piece : row.values()) {
-                addPieceToTeam(piece);
+        for (int row : chessBoard.keySet()) {
+            for (int col : chessBoard.get(row).keySet()) {
+                addPositionToTeam(new ChessPosition(row, col));
             }
         }
     }
