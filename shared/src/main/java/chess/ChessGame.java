@@ -71,21 +71,10 @@ public class ChessGame {
         if (validMoves != null && validMoves.contains(move) && !isInCheckAfterMove(move, piece.getTeamColor()) && isTeamsTurn(piece.getTeamColor())) {
             if (move.getPromotionPiece() != null) piece.setPieceType(move.getPromotionPiece());
             movePiece(move, piece);
-            setTeamTurn((piece.getTeamColor() == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE);
+            setNextTeamTurn(piece.getTeamColor());
         } else {
             throw new InvalidMoveException();
         }
-    }
-
-    /**
-     * Moves a piece according to the provided move
-     *
-     * @param move the move to be made
-     * @param piece the piece to be moved
-     */
-    private void movePiece(ChessMove move, ChessPiece piece) {
-        chessBoard.addPiece(move.getEndPosition(), piece);
-        chessBoard.removePiece(move.getStartPosition());
     }
 
     /**
@@ -123,24 +112,6 @@ public class ChessGame {
             }
         }
         return true;
-    }
-
-    /**
-     * Calculates if a team would still be in check after a move
-     *
-     * @param move the move to be made
-     * @param teamColor the team being checked
-     * @return true if the team is still in check after a move
-     */
-    private boolean isInCheckAfterMove(ChessMove move, TeamColor teamColor) {
-        ChessPiece movedPiece = chessBoard.getPiece(move.getStartPosition());
-        ChessPiece removedPiece = chessBoard.getPiece(move.getEndPosition());
-        ChessMove reversedMove = new ChessMove(move.getEndPosition(), move.getStartPosition(), null);
-        movePiece(move, movedPiece);
-        boolean inCheck = (isInCheck(teamColor));
-        movePiece(reversedMove, movedPiece);
-        chessBoard.addPiece(move.getEndPosition(), removedPiece);
-        return inCheck;
     }
 
     /**
@@ -183,7 +154,51 @@ public class ChessGame {
         return chessBoard;
     }
 
+    /**
+     * Moves a piece according to the provided move
+     *
+     * @param move the move to be made
+     * @param piece the piece to be moved
+     */
+    private void movePiece(ChessMove move, ChessPiece piece) {
+        chessBoard.addPiece(move.getEndPosition(), piece);
+        chessBoard.removePiece(move.getStartPosition());
+    }
+
+    /**
+     * Calculates if a team would still be in check after a move
+     *
+     * @param move the move to be made
+     * @param teamColor the team being checked
+     * @return true if the team is still in check after a move
+     */
+    private boolean isInCheckAfterMove(ChessMove move, TeamColor teamColor) {
+        ChessPiece movedPiece = chessBoard.getPiece(move.getStartPosition());
+        ChessPiece removedPiece = chessBoard.getPiece(move.getEndPosition());
+        ChessMove reversedMove = new ChessMove(move.getEndPosition(), move.getStartPosition(), null);
+        movePiece(move, movedPiece);
+        boolean inCheck = (isInCheck(teamColor));
+        movePiece(reversedMove, movedPiece);
+        chessBoard.addPiece(move.getEndPosition(), removedPiece);
+        return inCheck;
+    }
+
+    /**
+     * Calculates if it's the given team's turn
+     *
+     * @param team team to check
+     * @return if it is the team's turn
+     */
     private boolean isTeamsTurn(TeamColor team) {
         return (getTeamTurn() == team);
+    }
+
+    /**
+     * Sets the turn to the next team
+     *
+     * @param currentTeam the current team
+     */
+    private void setNextTeamTurn(TeamColor currentTeam) {
+        setTeamTurn((currentTeam == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE);
     }
 }
