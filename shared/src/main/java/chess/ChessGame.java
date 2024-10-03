@@ -51,7 +51,12 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         ChessPiece piece = chessBoard.getPiece(startPosition);
-        return (piece != null) ? piece.pieceMoves(chessBoard, startPosition) : null;
+        if (piece != null) {
+            Collection<ChessMove> possibleMoves = piece.pieceMoves(chessBoard, startPosition);
+            possibleMoves.removeIf(move -> isInCheckAfterMove(move, piece.getTeamColor()));
+            return possibleMoves;
+        }
+        return null;
     }
 
     /**
@@ -63,10 +68,10 @@ public class ChessGame {
     public void makeMove(ChessMove move) throws InvalidMoveException {
         ChessPiece piece = chessBoard.getPiece(move.getStartPosition());
         Collection<ChessMove> validMoves = validMoves(move.getStartPosition());
-        TeamColor team = piece.getTeamColor();
-        if (validMoves.contains(move) && !isInCheckAfterMove(move, team) && isTeamsTurn(team)) {
+        if (validMoves != null && validMoves.contains(move) && !isInCheckAfterMove(move, piece.getTeamColor()) && isTeamsTurn(piece.getTeamColor())) {
             if (move.getPromotionPiece() != null) piece.setPieceType(move.getPromotionPiece());
             movePiece(move, piece);
+            setTeamTurn((piece.getTeamColor() == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE);
         } else {
             throw new InvalidMoveException();
         }
@@ -112,11 +117,9 @@ public class ChessGame {
     public boolean isInCheckmate(TeamColor teamColor) {
         Set<ChessPosition> team  = chessBoard.getTeamSet(teamColor);
         for (ChessPosition position : team) {
-            ChessPiece piece = chessBoard.getPiece(position);
-            for (ChessMove move : piece.pieceMoves(chessBoard, position)) {
-                if (!isInCheckAfterMove(move, teamColor)) {
-                    return false;
-                }
+            Collection<ChessMove> moves = validMoves(position);
+            if (moves != null && !moves.isEmpty()) {
+                return false;
             }
         }
         return true;
@@ -152,8 +155,8 @@ public class ChessGame {
         if (!isInCheck(teamColor)) {
             Set<ChessPosition> team  = chessBoard.getTeamSet(teamColor);
             for (ChessPosition position : team) {
-                ChessPiece piece = chessBoard.getPiece(position);
-                if (!piece.pieceMoves(chessBoard, position).isEmpty()) {
+                Collection<ChessMove> moves = validMoves(position);
+                if (moves != null && !moves.isEmpty()) {
                     hasAnyMoves = true;
                 }
             }
