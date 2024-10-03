@@ -19,7 +19,11 @@ public class ChessBoard {
 
     public ChessBoard() {
         for (int i = 1; i <= 8; i++) {
-            chessBoard.put(i, new HashMap<>());
+            HashMap<Integer, ChessPiece> col = new HashMap<>();
+            chessBoard.put(i, col);
+            for (int j = 1; j <= 8; j++) {
+                col.put(j, null);
+            }
         }
     }
 
@@ -28,12 +32,12 @@ public class ChessBoard {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ChessBoard that = (ChessBoard) o;
-        return Objects.equals(chessBoard, that.chessBoard);
+        return Objects.equals(chessBoard, that.chessBoard) && Objects.equals(whitePieces, that.whitePieces) && Objects.equals(blackPieces, that.blackPieces);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(chessBoard);
+        return Objects.hash(chessBoard, whitePieces, blackPieces);
     }
 
     /**
@@ -101,8 +105,9 @@ public class ChessBoard {
             row.put(i, new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN));
         }
         for (int i = 3; i <= 6; i++) {
+            HashMap<Integer, ChessPiece> col = chessBoard.get(i);
             for (int j = 1; j <= 8; j++) {
-                chessBoard.put(i, new HashMap<>());
+                col.put(j, null);
             }
         }
         row = chessBoard.get(7);
@@ -143,10 +148,12 @@ public class ChessBoard {
      */
     private void addPositionToTeam(ChessPosition position) {
         ChessPiece piece = getPiece(position);
-        if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
-            whitePieces.add(position);
-        } else {
-            blackPieces.add(position);
+        if (piece != null) {
+            if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+                whitePieces.add(position);
+            } else {
+                blackPieces.add(position);
+            }
         }
     }
 
