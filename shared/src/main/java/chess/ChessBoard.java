@@ -44,7 +44,7 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        if (getPiece(position) != null) removePiece(position);
+        if (getPiece(position) != null) removePositionFromTeam(position);
         chessBoard.get(position.getRow()).put(position.getColumn(), piece);
         if (piece != null) addPositionToTeam(position);
     }
