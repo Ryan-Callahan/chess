@@ -177,3 +177,10 @@ is made static so they can be referenced without initializing the class as an ob
 
 ---
 
+# Server
+
+[Chess Server Sequence Diagram](Ryan%20Callahan%20-%20Chess%20Server%20Sequence%20Diagram.png)
+
+## package name here
+
+
