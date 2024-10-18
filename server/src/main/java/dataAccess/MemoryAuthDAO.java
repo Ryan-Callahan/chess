@@ -1,16 +1,49 @@
 package dataAccess;
 
-public class MemoryAuthDAO {
-//    Here are some examples of the kinds of methods your DAOs will need to support. This list is not exhaustive. You should consult your server design in order to determine all of the methods you need to provide.
-//
-    //    clear: A method for clearing all data from the database. This is used during testing.
-    //    createUser: Create a new user.
-    //    getUser: Retrieve a user with the given username.
-    //    createGame: Create a new game.
-    //    getGame: Retrieve a specified game with the given game ID.
-    //    listGames: Retrieve all games.
-    //    updateGame: Updates a chess game. It should replace the chess game string corresponding to a given gameID. This is used when players join a game or when a move is made.
-    //    createAuth: Create a new authorization.
-    //    getAuth: Retrieve an authorization given an authToken.
-    //    deleteAuth: Delete an authorization so that it is no longer valid.
+import dataAccess.interfaces.AuthDAO;
+import model.AuthData;
+
+import javax.xml.crypto.Data;
+import java.util.HashMap;
+import java.util.Objects;
+
+public class MemoryAuthDAO implements AuthDAO {
+    private HashMap<String, AuthData> authTable = new HashMap<>();
+    @Override
+    public void createAuth(AuthData auth) throws DataAccessException {
+        if (!usernameExists(auth.username())) {
+            authTable.put(auth.authToken(), auth);
+        } else {
+            throw new DataAccessException("Username is already associated with an authToken");
+        }
+
+    }
+
+    @Override
+    public AuthData getAuthByToken(String authToken) throws DataAccessException {
+        if (authTable.containsKey(authToken)) {
+            return authTable.get(authToken);
+        } else {
+            throw new DataAccessException("Invalid Auth Token; Could not find authentication!");
+        }
+    }
+
+    @Override
+    public void removeAuth(String authToken) {
+        authTable.remove(authToken);
+    }
+
+    @Override
+    public void clear() {
+        authTable = new HashMap<>();
+    }
+
+    private Boolean usernameExists(String username) {
+        for (AuthData auth : authTable.values()) {
+            if (Objects.equals(username, auth.username())) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
