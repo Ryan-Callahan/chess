@@ -9,10 +9,9 @@ import model.result.CreateGameResult;
 import model.result.JoinGameResult;
 import model.result.ListGamesResult;
 
-public class GameService extends AuthService {
-    private final GameDAO gameDAO;
+public class GameService extends AuthService implements Service {
+
     public GameService() {
-        gameDAO = new MemoryGameDAO();
     }
 
     public ListGamesResult listGames(ListGamesRequest listGamesRequest) {
