@@ -43,9 +43,6 @@ public class UserService extends AuthService implements Service {
         return null;
     }
 
-    private void createUser(RegisterRequest registerRequest) {
-        UserData newUser = new UserData(registerRequest.username(), registerRequest.password(), registerRequest.email());
-    }
     private Boolean isPasswordCorrect(UserData user, String password) {
         return Objects.equals(user.password(), password);
     }
