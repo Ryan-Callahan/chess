@@ -3,7 +3,6 @@ package dataAccess;
 import dataAccess.interfaces.AuthDAO;
 import model.AuthData;
 
-import javax.xml.crypto.Data;
 import java.util.HashMap;
 import java.util.Objects;
 
