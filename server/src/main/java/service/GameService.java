@@ -1,7 +1,5 @@
 package service;
 
-import dataAccess.MemoryGameDAO;
-import dataAccess.interfaces.GameDAO;
 import model.request.CreateGameRequest;
 import model.request.JoinGameRequest;
 import model.request.ListGamesRequest;

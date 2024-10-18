@@ -1,10 +1,7 @@
 package service;
 
 import dataAccess.DataAccessException;
-import dataAccess.MemoryAuthDAO;
-import dataAccess.interfaces.AuthDAO;
 import model.AuthData;
-import model.request.LoginRequest;
 import model.result.ErrorResult;
 import model.result.LoginResult;
 
