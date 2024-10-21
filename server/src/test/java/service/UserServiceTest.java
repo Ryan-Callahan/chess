@@ -9,23 +9,22 @@ import model.request.RegisterRequest;
 import model.result.EmptyResult;
 import model.result.ErrorResult;
 import model.result.LoginResult;
-import model.result.Response;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static serializer.GSerializer.deserialize;
-import static serializer.GSerializer.serialize;
 import static service.Service.authDAO;
 import static service.Service.userDAO;
 
 public class UserServiceTest {
-    UserService userService = new UserService();
+    UserService userService;
 
     @BeforeEach
     void setup() {
+        userService = new UserService();
         userService.clearAllDB();
+
     }
 
     @Test
@@ -36,7 +35,7 @@ public class UserServiceTest {
         Assertions.assertEquals(200, response.statusCode());
         Assertions.assertSame(LoginResult.class, response.body().getClass());
 
-        LoginResult responseBody = deserialize(serialize(response.body()), LoginResult.class);
+        LoginResult responseBody = ((LoginResult) response.body());
         Assertions.assertEquals("username", responseBody.username());
 
         UserData expectedData = new UserData("username", "password", "email");
@@ -63,7 +62,7 @@ public class UserServiceTest {
         Assertions.assertEquals(200, response.statusCode());
         Assertions.assertSame(LoginResult.class, response.body().getClass());
 
-        LoginResult responseBody = deserialize(serialize(response.body()), LoginResult.class);
+        LoginResult responseBody = ((LoginResult) response.body());
         Assertions.assertEquals("username", responseBody.username());
         Assertions.assertEquals("username", authDAO.getAuthByToken(responseBody.authToken()).username());
     }
