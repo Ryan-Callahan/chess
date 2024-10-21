@@ -1,4 +1,4 @@
 package model.result;
 
-public record CreateGameResult(int statusCode, int gameID) {
+public record CreateGameResult(int gameID) {
 }

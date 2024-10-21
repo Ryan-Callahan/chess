@@ -1,4 +1,4 @@
 package model.result;
 
-public record LoginResult(int statusCode, String username, String authToken) {
+public record LoginResult(String username, String authToken) {
 }

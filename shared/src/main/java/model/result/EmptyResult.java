@@ -1,4 +1,4 @@
 package model.result;
 
-public record EmptyResult(int statusCode) {
+public record EmptyResult() {
 }
