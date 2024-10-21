@@ -8,7 +8,7 @@ import java.util.HashMap;
 public class MemoryUserDAO implements UserDAO {
     HashMap<String, UserData> userTable = new HashMap<>();
     @Override
-    public void createUser(UserData user) throws DataAccessException{
+    public void createUser(UserData user) throws DataAccessException {
         if (!userTable.containsKey(user.username())) {
             userTable.put(user.username(), user);
         } else {
@@ -17,7 +17,7 @@ public class MemoryUserDAO implements UserDAO {
     }
 
     @Override
-    public UserData getUser(String username) throws DataAccessException{
+    public UserData getUser(String username) throws DataAccessException {
         if (userTable.containsKey(username)) {
             return userTable.get(username);
         } else {
@@ -26,7 +26,7 @@ public class MemoryUserDAO implements UserDAO {
     }
 
     @Override
-    public void updateUser(UserData user) throws DataAccessException{
+    public void updateUser(UserData user) throws DataAccessException {
         if (userTable.containsKey(user.username())) {
             userTable.put(user.username(), user);
         } else {
@@ -35,8 +35,12 @@ public class MemoryUserDAO implements UserDAO {
     }
 
     @Override
-    public void deleteUser(UserData user) {
-        userTable.remove(user.username());
+    public void deleteUser(UserData user) throws DataAccessException {
+        if (userTable.containsKey(user.username())) {
+            userTable.remove(user.username());
+        } else {
+            throw new DataAccessException("Invalid User Removal; User does not exist!");
+        }
     }
 
     @Override

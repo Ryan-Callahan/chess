@@ -36,13 +36,17 @@ public class MemoryGameDAO implements GameDAO {
         if (gameTable.containsKey(game.gameID())) {
             gameTable.put(game.gameID(), game);
         } else {
-            throw new DataAccessException("Invalid Game update; Game does not exits!");
+            throw new DataAccessException("Invalid Game update; Game does not exist!");
         }
     }
 
     @Override
-    public void deleteGame(GameData game) {
-        gameTable.remove(game.gameID());
+    public void deleteGame(GameData game) throws DataAccessException {
+        if (gameTable.containsKey(game.gameID())) {
+            gameTable.remove(game.gameID());
+        } else {
+            throw new DataAccessException("Invalid Game deletion; Game does not exist!");
+        }
     }
 
     @Override

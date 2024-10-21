@@ -28,8 +28,12 @@ public class MemoryAuthDAO implements AuthDAO {
     }
 
     @Override
-    public void removeAuth(String authToken) {
-        authTable.remove(authToken);
+    public void removeAuth(String authToken) throws DataAccessException {
+        if (authTable.containsKey(authToken)) {
+            authTable.remove(authToken);
+        } else {
+            throw new DataAccessException("Invalid Auth Token; Could not find authentication!");
+        }
     }
 
     @Override
