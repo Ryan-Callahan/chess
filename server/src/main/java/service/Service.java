@@ -7,6 +7,7 @@ import dataAccess.interfaces.AuthDAO;
 import dataAccess.interfaces.GameDAO;
 import dataAccess.interfaces.UserDAO;
 import model.result.EmptyResult;
+import model.result.Response;
 import model.result.ErrorResult;
 
 public interface Service {
@@ -19,9 +20,9 @@ public interface Service {
             gameDAO.clear();
             userDAO.clear();
             authDAO.clear();
-            return new EmptyResult(200);
+            return new Response(200, new EmptyResult());
         } catch (Exception e) {
-            return new ErrorResult(500, e.getMessage());
+            return new Response(500, new ErrorResult(e.getMessage()));
         }
     }
 }

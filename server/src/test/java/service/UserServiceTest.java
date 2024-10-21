@@ -1,11 +1,15 @@
 package service;
 
 import dataAccess.DataAccessException;
+import model.AuthData;
 import model.UserData;
 import model.request.LoginRequest;
+import model.request.LogoutRequest;
 import model.request.RegisterRequest;
+import model.result.EmptyResult;
 import model.result.ErrorResult;
 import model.result.LoginResult;
+import model.result.Response;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -28,11 +32,12 @@ public class UserServiceTest {
     @DisplayName("Should register and log in a valid user")
     void registerTest() throws DataAccessException {
         RegisterRequest registerRequest = new RegisterRequest("username", "password", "email");
-        var result = userService.register(registerRequest);
-        Assertions.assertSame(LoginResult.class, result.getClass());
+        var response = userService.register(registerRequest);
+        Assertions.assertEquals(200, response.statusCode());
+        Assertions.assertSame(LoginResult.class, response.body().getClass());
 
-        LoginResult actualResult = deserialize(serialize(result), LoginResult.class);
-        Assertions.assertEquals("username", actualResult.username());
+        LoginResult responseBody = deserialize(serialize(response.body()), LoginResult.class);
+        Assertions.assertEquals("username", responseBody.username());
 
         UserData expectedData = new UserData("username", "password", "email");
         UserData actualData = userDAO.getUser("username");
@@ -44,11 +49,9 @@ public class UserServiceTest {
     void invalidRegisterTest() {
         RegisterRequest registerRequest = new RegisterRequest("username", "password", "email");
         userService.register(registerRequest);
-        var result = userService.register(registerRequest);
-        Assertions.assertSame(ErrorResult.class, result.getClass());
-
-        ErrorResult actualResult = deserialize(serialize(result), ErrorResult.class);
-        Assertions.assertEquals(403, actualResult.statusCode());
+        var response = userService.register(registerRequest);
+        Assertions.assertEquals(403, response.statusCode());
+        Assertions.assertSame(ErrorResult.class, response.body().getClass());
     }
 
     @Test
@@ -56,12 +59,13 @@ public class UserServiceTest {
     void loginTest() throws DataAccessException {
         userDAO.createUser(new UserData("username", "password", "email"));
         LoginRequest loginRequest = new LoginRequest("username", "password");
-        var result = userService.login(loginRequest);
-        Assertions.assertSame(LoginResult.class, result.getClass());
+        var response = userService.login(loginRequest);
+        Assertions.assertEquals(200, response.statusCode());
+        Assertions.assertSame(LoginResult.class, response.body().getClass());
 
-        LoginResult actualResult = deserialize(serialize(result), LoginResult.class);
-        Assertions.assertEquals("username", actualResult.username());
-        Assertions.assertEquals("username", authDAO.getAuthByToken(actualResult.authToken()).username());
+        LoginResult responseBody = deserialize(serialize(response.body()), LoginResult.class);
+        Assertions.assertEquals("username", responseBody.username());
+        Assertions.assertEquals("username", authDAO.getAuthByToken(responseBody.authToken()).username());
     }
 
     @Test
@@ -69,18 +73,14 @@ public class UserServiceTest {
     void incorrectLoginTest() throws DataAccessException {
         userDAO.createUser(new UserData("username", "password", "email"));
         LoginRequest loginRequest = new LoginRequest("username", "passw0rd");
-        var result = userService.login(loginRequest);
-        Assertions.assertSame(ErrorResult.class, result.getClass());
-
-        ErrorResult actualResult = deserialize(serialize(result), ErrorResult.class);
-        Assertions.assertEquals(401, actualResult.statusCode()); //incorrect password
+        var response = userService.login(loginRequest);
+        Assertions.assertEquals(401, response.statusCode()); //incorrect password
+        Assertions.assertSame(ErrorResult.class, response.body().getClass());
 
         loginRequest = new LoginRequest("us3rname", "password");
-        result = userService.login(loginRequest);
-        Assertions.assertSame(ErrorResult.class, result.getClass());
-
-        actualResult = deserialize(serialize(result), ErrorResult.class);
-        Assertions.assertEquals(403, actualResult.statusCode()); //incorrect user
+        response = userService.login(loginRequest);
+        Assertions.assertEquals(403, response.statusCode()); //incorrect user
+        Assertions.assertSame(ErrorResult.class, response.body().getClass());
     }
 
     @Test
@@ -89,23 +89,29 @@ public class UserServiceTest {
         userDAO.createUser(new UserData("username", "password", "email"));
         LoginRequest loginRequest = new LoginRequest("username", "passw0rd");
         userService.login(loginRequest);
-        var result = userService.login(loginRequest);
-        Assertions.assertSame(ErrorResult.class, result.getClass());
-
-        ErrorResult actualResult = deserialize(serialize(result), ErrorResult.class);
-        Assertions.assertEquals(401, actualResult.statusCode());
+        var response = userService.login(loginRequest);
+        Assertions.assertEquals(401, response.statusCode());
+        Assertions.assertSame(ErrorResult.class, response.body().getClass());
     }
 
     @Test
     @DisplayName("Should log the user out")
-    void logoutTest() {
-
+    void logoutTest() throws DataAccessException {
+        userDAO.createUser(new UserData("username", "password", "email"));
+        authDAO.createAuth(new AuthData("testToken", "username"));
+        LogoutRequest logoutRequest = new LogoutRequest("testToken");
+        var response = userService.logout(logoutRequest);
+        Assertions.assertEquals(200, response.statusCode());
+        Assertions.assertSame(EmptyResult.class, response.body().getClass());
     }
 
     @Test
     @DisplayName("Should fail to log the user out without authentication")
     void logoutFailTest() {
-
+        LogoutRequest logoutRequest = new LogoutRequest("testToken");
+        var response = userService.logout(logoutRequest);
+        Assertions.assertEquals(401, response.statusCode());
+        Assertions.assertSame(ErrorResult.class, response.body().getClass());
     }
 
 }
