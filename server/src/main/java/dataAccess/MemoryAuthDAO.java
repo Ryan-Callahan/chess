@@ -9,13 +9,8 @@ import java.util.Objects;
 public class MemoryAuthDAO implements AuthDAO {
     private HashMap<String, AuthData> authTable = new HashMap<>();
     @Override
-    public void createAuth(AuthData auth) throws DataAccessException {
-        if (!usernameExists(auth.username())) {
-            authTable.put(auth.authToken(), auth);
-        } else {
-            throw new DataAccessException("Username is already associated with an authToken");
-        }
-
+    public void createAuth(AuthData auth){
+        authTable.put(auth.authToken(), auth);
     }
 
     @Override

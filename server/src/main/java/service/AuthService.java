@@ -15,11 +15,7 @@ public class AuthService implements Service {
 
     protected Result createAuth(String username) {
         var newAuth = new AuthData(generateAuthToken(), username);
-        try {
-            authDAO.createAuth(newAuth);
-            return new Result(200, new LoginResult(newAuth.authToken(), username));
-        } catch (DataAccessException e) {
-            return new Result(500, new ErrorResult(e.getMessage()));
-        }
+        authDAO.createAuth(newAuth);
+        return new Result(200, new LoginResult(newAuth.authToken(), username));
     }
 }

@@ -37,7 +37,7 @@ public class UserService extends AuthService implements Service {
                 return new Result(401, new ErrorResult("unauthorized"));
             }
         } catch (DataAccessException e) {
-            return new Result(403, new ErrorResult(e.getMessage()));
+            return new Result(401, new ErrorResult(e.getMessage()));
         }
     }
 
