@@ -1,7 +1,9 @@
 package server;
 
-import model.request.LoginRequest;
-import model.request.RegisterRequest;
+import dataAccess.DataAccessException;
+import model.request.*;
+import model.result.ErrorResult;
+import model.result.Result;
 import service.GameService;
 import service.UserService;
 import spark.*;
@@ -44,14 +46,14 @@ public class Server {
         response.status(clearResult.statusCode());
         return serialize(clearResult.body());
     }
-    private Object register(Request request, Response response) {
+    private Object register(Request request, Response response) throws DataAccessException {
         var registerRequest = deserialize(request.body(), RegisterRequest.class);
         var registerResult = userService.register(registerRequest);
         response.status(registerResult.statusCode());
         return serialize(registerResult.body());
     }
 
-    private Object login(Request request, Response response) {
+    private Object login(Request request, Response response) throws DataAccessException {
         var loginRequest = deserialize(request.body(), LoginRequest.class);
         var registerResult = userService.login(loginRequest);
         response.status(registerResult.statusCode());
@@ -59,18 +61,30 @@ public class Server {
     }
 
     private Object logout(Request request, Response response) {
-        return null;
+        var logoutRequest = new LogoutRequest(request.headers("authorization"));
+        var logoutResult = userService.logout(logoutRequest);
+        response.status(logoutResult.statusCode());
+        return serialize(logoutResult.body());
     }
 
     private Object listGames(Request request, Response response) {
-        return null;
+        var listGamesRequest = new ListGamesRequest(request.headers("authorization"));
+        var listGamesResult = gameService.listGames(listGamesRequest);
+        response.status(listGamesResult.statusCode());
+        return serialize(listGamesResult.body());
     }
 
     private Object createGame(Request request, Response response) {
-        return null;
+        var createGameRequest = new RequestWithAuth(request.headers("authorization"), deserialize(request.body(), CreateGameRequest.class));
+        var createGameResult = gameService.createGame(createGameRequest);
+        response.status(createGameResult.statusCode());
+        return serialize(createGameResult.body());
     }
 
     private Object joinGame(Request request, Response response) {
-        return null;
+        var joinGameRequest = new RequestWithAuth(request.headers("authorization"), deserialize(request.body(), JoinGameRequest.class));
+        var joinGameResult = gameService.joinGame(joinGameRequest);
+        response.status(joinGameResult.statusCode());
+        return serialize(joinGameResult.body());
     }
 }

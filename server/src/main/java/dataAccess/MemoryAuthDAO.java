@@ -18,7 +18,7 @@ public class MemoryAuthDAO implements AuthDAO {
         if (authTable.containsKey(authToken)) {
             return authTable.get(authToken);
         } else {
-            throw new DataAccessException("Invalid Auth Token; Could not find authentication!");
+            throw new DataAccessException("Error: bad request");
         }
     }
 
@@ -27,7 +27,7 @@ public class MemoryAuthDAO implements AuthDAO {
         if (authTable.containsKey(authToken)) {
             authTable.remove(authToken);
         } else {
-            throw new DataAccessException("Invalid Auth Token; Could not find authentication!");
+            throw new DataAccessException("Error: unauthorized");
         }
     }
 

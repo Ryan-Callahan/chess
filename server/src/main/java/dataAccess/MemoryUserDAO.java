@@ -12,7 +12,7 @@ public class MemoryUserDAO implements UserDAO {
         if (!userTable.containsKey(user.username())) {
             userTable.put(user.username(), user);
         } else {
-            throw new DataAccessException("Invalid username; Username already exists!");
+            throw new DataAccessException("Error: already taken");
         }
     }
 
@@ -21,7 +21,7 @@ public class MemoryUserDAO implements UserDAO {
         if (userTable.containsKey(username)) {
             return userTable.get(username);
         } else {
-            throw new DataAccessException("Invalid Username; Could not find user!");
+            throw new DataAccessException("Error: unauthorized");
         }
     }
 

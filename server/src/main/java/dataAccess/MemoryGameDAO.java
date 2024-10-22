@@ -22,7 +22,7 @@ public class MemoryGameDAO implements GameDAO {
         if (gameTable.containsKey(gameID)) {
             return gameTable.get(gameID);
         } else {
-            throw new DataAccessException("Invalid GameID; Could not find game!");
+            throw new DataAccessException("Error: bad request");
         }
     }
 

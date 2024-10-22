@@ -11,6 +11,8 @@ import model.result.Result;
 
 import java.util.Objects;
 
+import static serializer.GSerializer.serialize;
+
 public class UserService extends AuthService implements Service {
 
     public Result register(RegisterRequest registerRequest) {
@@ -19,14 +21,18 @@ public class UserService extends AuthService implements Service {
         String email = registerRequest.email();
         var newUser = new UserData(username, password, email);
         try {
-            userDAO.createUser(newUser);
-            return login(new LoginRequest(username, password));
+            if (password != null) {
+                userDAO.createUser(newUser);
+                return login(new LoginRequest(username, password));
+            } else {
+                return new Result(400, new ErrorResult("Error: bad request"));
+            }
         } catch (DataAccessException e) {
             return new Result(403, new ErrorResult(e.getMessage()));
         }
     }
 
-    public Result login(LoginRequest loginRequest) {
+    public Result login(LoginRequest loginRequest) throws DataAccessException {
         String username = loginRequest.username();
         String password = loginRequest.password();
         try {
@@ -34,7 +40,7 @@ public class UserService extends AuthService implements Service {
             if (isPasswordCorrect(user, password)) {
                 return createAuth(username);
             } else {
-                return new Result(401, new ErrorResult("unauthorized"));
+                return new Result(401, new ErrorResult("Error: unauthorized"));
             }
         } catch (DataAccessException e) {
             return new Result(401, new ErrorResult(e.getMessage()));

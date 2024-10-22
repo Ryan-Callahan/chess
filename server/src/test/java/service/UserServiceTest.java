@@ -78,7 +78,7 @@ public class UserServiceTest {
 
         loginRequest = new LoginRequest("us3rname", "password");
         response = userService.login(loginRequest);
-        Assertions.assertEquals(403, response.statusCode()); //incorrect user
+        Assertions.assertEquals(401, response.statusCode()); //incorrect user
         Assertions.assertSame(ErrorResult.class, response.body().getClass());
     }
 
