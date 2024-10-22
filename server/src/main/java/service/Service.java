@@ -7,8 +7,8 @@ import dataAccess.interfaces.AuthDAO;
 import dataAccess.interfaces.GameDAO;
 import dataAccess.interfaces.UserDAO;
 import model.result.EmptyResult;
-import model.result.Result;
 import model.result.ErrorResult;
+import model.result.Result;
 
 public interface Service {
     GameDAO gameDAO = new MemoryGameDAO();

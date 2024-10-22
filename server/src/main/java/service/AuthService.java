@@ -1,8 +1,6 @@
 package service;
 
-import dataAccess.DataAccessException;
 import model.AuthData;
-import model.result.ErrorResult;
 import model.result.LoginResult;
 import model.result.Result;
 

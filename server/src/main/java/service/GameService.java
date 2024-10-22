@@ -12,8 +12,6 @@ import model.result.*;
 import java.util.Collection;
 import java.util.Objects;
 
-import static serializer.GSerializer.serialize;
-
 public class GameService extends AuthService implements Service {
     private int gameIDCtr = 1;
 

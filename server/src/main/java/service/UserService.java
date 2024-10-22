@@ -11,8 +11,6 @@ import model.result.Result;
 
 import java.util.Objects;
 
-import static serializer.GSerializer.serialize;
-
 public class UserService extends AuthService implements Service {
 
     public Result register(RegisterRequest registerRequest) {
@@ -32,7 +30,7 @@ public class UserService extends AuthService implements Service {
         }
     }
 
-    public Result login(LoginRequest loginRequest) throws DataAccessException {
+    public Result login(LoginRequest loginRequest) {
         String username = loginRequest.username();
         String password = loginRequest.password();
         try {

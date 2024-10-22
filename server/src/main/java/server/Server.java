@@ -1,15 +1,14 @@
 package server;
 
-import dataAccess.DataAccessException;
 import model.request.*;
-import model.result.ErrorResult;
-import model.result.Result;
 import service.GameService;
 import service.UserService;
-import spark.*;
+import spark.Request;
+import spark.Response;
+import spark.Spark;
 
-import static serializer.GSerializer.deserialize;
-import static serializer.GSerializer.serialize;
+import static server.serializer.GSerializer.deserialize;
+import static server.serializer.GSerializer.serialize;
 
 public class Server {
     private final UserService userService = new UserService();
@@ -46,14 +45,14 @@ public class Server {
         response.status(clearResult.statusCode());
         return serialize(clearResult.body());
     }
-    private Object register(Request request, Response response) throws DataAccessException {
+    private Object register(Request request, Response response) {
         var registerRequest = deserialize(request.body(), RegisterRequest.class);
         var registerResult = userService.register(registerRequest);
         response.status(registerResult.statusCode());
         return serialize(registerResult.body());
     }
 
-    private Object login(Request request, Response response) throws DataAccessException {
+    private Object login(Request request, Response response) {
         var loginRequest = deserialize(request.body(), LoginRequest.class);
         var registerResult = userService.login(loginRequest);
         response.status(registerResult.statusCode());

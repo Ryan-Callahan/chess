@@ -1,4 +1,4 @@
-package serializer;
+package server.serializer;
 
 import com.google.gson.Gson;
 
