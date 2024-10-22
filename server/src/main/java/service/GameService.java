@@ -13,31 +13,31 @@ import java.util.Collection;
 public class GameService extends AuthService implements Service {
     private int gameIDCtr = 1;
 
-    public Response listGames(ListGamesRequest listGamesRequest) {
+    public Result listGames(ListGamesRequest listGamesRequest) {
         if (!authDAO.existsAuth(listGamesRequest.authToken())) {
-            return new Response(401, new ErrorResult("unauthorized"));
+            return new Result(401, new ErrorResult("unauthorized"));
         }
         Collection<GameData> games = gameDAO.listGames();
-        return new Response(200, new ListGamesResult(games));
+        return new Result(200, new ListGamesResult(games));
     }
 
-    public Response createGame(CreateGameRequest createGameRequest) {
+    public Result createGame(CreateGameRequest createGameRequest) {
         String gameName = createGameRequest.gameName();
         String authToken = createGameRequest.authToken();
         if (!authDAO.existsAuth(authToken)) {
-            return new Response(401, new ErrorResult("unauthorized"));
+            return new Result(401, new ErrorResult("unauthorized"));
         }
         int gameID = gameIDCtr++;
         var newGame = new GameData(gameID, "", "", gameName, new ChessGame());
         try {
             gameDAO.createGame(newGame);
-            return new Response(200, new CreateGameResult(gameID));
+            return new Result(200, new CreateGameResult(gameID));
         } catch (DataAccessException e) {
-            return new Response(400, new ErrorResult(e.getMessage()));
+            return new Result(400, new ErrorResult(e.getMessage()));
         }
     }
 
-    public Response joinGame(JoinGameRequest joinGameRequest) {
+    public Result joinGame(JoinGameRequest joinGameRequest) {
         String joinColor = joinGameRequest.playerColor();
         int gameID = joinGameRequest.gameID();
         String authToken = joinGameRequest.authToken();
@@ -46,13 +46,13 @@ public class GameService extends AuthService implements Service {
         try {
             username = authDAO.getAuthByToken(authToken).username();
         } catch (DataAccessException e) {
-            return new Response(401, new ErrorResult(e.getMessage()));
+            return new Result(401, new ErrorResult(e.getMessage()));
         }
 
         try {
             game = gameDAO.getGame(gameID);
         } catch (DataAccessException e) {
-            return new Response(400, new ErrorResult(e.getMessage()));
+            return new Result(400, new ErrorResult(e.getMessage()));
         }
 
         return tryJoiningGame(game, joinColor, username);
@@ -76,16 +76,16 @@ public class GameService extends AuthService implements Service {
         return gameUpdate;
     }
 
-    private Response tryJoiningGame(GameData game, String joinColor, String username) {
+    private Result tryJoiningGame(GameData game, String joinColor, String username) {
         if (isColorTaken(game, joinColor)) {
-            return new Response(403, new ErrorResult("Could not join game; Color is already taken!"));
+            return new Result(403, new ErrorResult("Could not join game; Color is already taken!"));
         } else {
             try {
                 GameData gameUpdate = updatePlayerColor(game, joinColor, username);
                 gameDAO.updateGame(gameUpdate);
-                return new Response(200, new EmptyResult());
+                return new Result(200, new EmptyResult());
             } catch (DataAccessException e) {
-                return new Response(400, new ErrorResult(e.getMessage()));
+                return new Result(400, new ErrorResult(e.getMessage()));
             }
         }
     }

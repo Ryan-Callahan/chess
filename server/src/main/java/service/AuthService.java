@@ -4,7 +4,7 @@ import dataAccess.DataAccessException;
 import model.AuthData;
 import model.result.ErrorResult;
 import model.result.LoginResult;
-import model.result.Response;
+import model.result.Result;
 
 import java.util.UUID;
 
@@ -13,13 +13,13 @@ public class AuthService implements Service {
         return UUID.randomUUID().toString();
     }
 
-    protected Response createAuth(String username) {
+    protected Result createAuth(String username) {
         var newAuth = new AuthData(generateAuthToken(), username);
         try {
             authDAO.createAuth(newAuth);
-            return new Response(200, new LoginResult(username, newAuth.authToken()));
+            return new Result(200, new LoginResult(newAuth.authToken(), username));
         } catch (DataAccessException e) {
-            return new Response(500, new ErrorResult(e.getMessage()));
+            return new Result(500, new ErrorResult(e.getMessage()));
         }
     }
 }
