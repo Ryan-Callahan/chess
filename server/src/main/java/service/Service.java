@@ -15,7 +15,7 @@ public interface Service {
     UserDAO userDAO = new MemoryUserDAO();
     AuthDAO authDAO = new MemoryAuthDAO();
 
-    default Object clearAllDB() {
+    default Result clearAllDB() {
         try {
             gameDAO.clear();
             userDAO.clear();
