@@ -8,6 +8,7 @@ import java.util.HashMap;
 
 public class MemoryGameDAO implements GameDAO {
     private HashMap<Integer, GameData> gameTable = new HashMap<>();
+
     @Override
     public void createGame(GameData game) throws DataAccessException {
         if (!gameTable.containsValue(game)) {

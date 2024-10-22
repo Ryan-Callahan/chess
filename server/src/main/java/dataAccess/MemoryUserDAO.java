@@ -7,6 +7,7 @@ import java.util.HashMap;
 
 public class MemoryUserDAO implements UserDAO {
     HashMap<String, UserData> userTable = new HashMap<>();
+
     @Override
     public void createUser(UserData user) throws DataAccessException {
         if (!userTable.containsKey(user.username())) {

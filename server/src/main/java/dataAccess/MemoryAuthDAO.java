@@ -8,8 +8,9 @@ import java.util.Objects;
 
 public class MemoryAuthDAO implements AuthDAO {
     private HashMap<String, AuthData> authTable = new HashMap<>();
+
     @Override
-    public void createAuth(AuthData auth){
+    public void createAuth(AuthData auth) {
         authTable.put(auth.authToken(), auth);
     }
 

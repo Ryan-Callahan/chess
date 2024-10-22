@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 
 public class GSerializer {
     private static final Gson gsonSerializer = new Gson();
+
     public static String serialize(Object src) {
         return gsonSerializer.toJson(src);
     }

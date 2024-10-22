@@ -15,7 +15,7 @@ import java.util.Objects;
 public class GameService extends AuthService implements Service {
     private int gameIDCtr = 1;
 
-    public Result listGames(ListGamesRequest listGamesRequest){
+    public Result listGames(ListGamesRequest listGamesRequest) {
         if (!authDAO.existsAuth(listGamesRequest.authToken())) {
             return new Result(401, new ErrorResult("Error: unauthorized"));
         }

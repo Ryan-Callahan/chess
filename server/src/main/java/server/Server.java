@@ -45,6 +45,7 @@ public class Server {
         response.status(clearResult.statusCode());
         return serialize(clearResult.body());
     }
+
     private Object register(Request request, Response response) {
         var registerRequest = deserialize(request.body(), RegisterRequest.class);
         var registerResult = userService.register(registerRequest);
