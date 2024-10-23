@@ -7,7 +7,7 @@ import java.util.HashSet;
  * A service for calculating the all possible moves of a piece
  */
 public class PieceMoveService {
-    private static final ChessPiece.PieceType[] promotionPieceTypes = {
+    private static final ChessPiece.PieceType[] PROMOTION_PIECE_TYPES = {
             ChessPiece.PieceType.QUEEN,
             ChessPiece.PieceType.KNIGHT,
             ChessPiece.PieceType.BISHOP,
@@ -26,32 +26,49 @@ public class PieceMoveService {
      */
     public static Collection<ChessMove> calculateMoves(ChessBoard board, ChessPosition startPosition, Direction[] directions, Boolean continuous) {
         HashSet<ChessMove> chessMoves = new HashSet<>();
-        Boolean continuing;
         ChessPiece currentPiece = board.getPiece(startPosition);
         for (Direction direction : directions) {
-            continuing = continuous;
+            Boolean continuing = continuous;
             int currentRow = startPosition.getRow();
             int currentCol = startPosition.getColumn();
             do {
                 currentRow += direction.yVector();
                 currentCol += direction.xVector();
                 ChessPosition nextPosition = new ChessPosition(currentRow, currentCol);
-                if (isOnBoard(nextPosition)) {
-                    if (board.getPiece(nextPosition) != null) {
-                        ChessPiece nextPiece = board.getPiece(nextPosition);
-                        continuing = false;
-                        if (currentPiece.getTeamColor() != nextPiece.getTeamColor()) {
-                            chessMoves.add(new ChessMove(startPosition, nextPosition, null));
-                        }
-                    } else {
-                        chessMoves.add(new ChessMove(startPosition, nextPosition, null));
-                    }
-                } else {
-                    continuing = false;
-                }
+                continuing = calcluateNextStep(board, currentPiece, startPosition, nextPosition, chessMoves, continuing);
             } while (continuing);
         }
         return chessMoves;
+    }
+
+    /**
+     * A helper method for calculateMoves that calculates the next move a piece can make.
+     * Adds valid moves to chessMoves.
+     *
+     * @param board the ChessBoard
+     * @param currentPiece the current ChessPiece
+     * @param startPosition the current position of the currentPiece
+     * @param nextPosition the position to calculate
+     * @param chessMoves the set of ChessMove
+     * @param continuing whether the piece can move continuously or not
+     * @return A boolean representing if the piece should keep continuing or not.
+     */
+    private static Boolean calcluateNextStep(ChessBoard board, ChessPiece currentPiece, ChessPosition startPosition, ChessPosition nextPosition,
+                                             HashSet<ChessMove> chessMoves, Boolean continuing) {
+        if (isOnBoard(nextPosition)) {
+            if (board.getPiece(nextPosition) != null) {
+                ChessPiece nextPiece = board.getPiece(nextPosition);
+                continuing = false;
+                if (currentPiece.getTeamColor() != nextPiece.getTeamColor()) {
+                    chessMoves.add(new ChessMove(startPosition, nextPosition, null));
+                }
+            } else {
+                chessMoves.add(new ChessMove(startPosition, nextPosition, null));
+            }
+        } else {
+            continuing = false;
+        }
+        return continuing;
     }
 
     /**
@@ -83,25 +100,57 @@ public class PieceMoveService {
                     startPosition.getColumn() + direction.xVector());
             if (isOnBoard(nextPosition)) {
                 if (direction.xVector() != 0) {
-                    if (board.getPiece(nextPosition) != null
-                            && board.getPiece(nextPosition).getTeamColor() != currentPiece.getTeamColor()) {
-                        addPawnMove(startPosition, nextPosition, chessMoves);
-                    }
+                    calculatePawnDiagonalMove(board, startPosition, nextPosition, currentPiece, chessMoves);
                 } else {
-                    if (board.getPiece(nextPosition) == null) {
-                        if (!pawnHasMoved(startPosition, currentPiece.getTeamColor())) {
-                            ChessPosition doubleMove = new ChessPosition(nextPosition.getRow() + direction.yVector()*polarity,
-                                    startPosition.getColumn());
-                            if (board.getPiece(doubleMove) == null) {
-                                chessMoves.add(new ChessMove(startPosition, doubleMove, null));
-                            }
-                        }
-                        addPawnMove(startPosition, nextPosition, chessMoves);
-                    }
+                    calculatePawnForwardMove(board, startPosition, nextPosition, direction, currentPiece, chessMoves);
                 }
             }
         }
         return chessMoves;
+    }
+
+    /**
+     * A helper method for calculatePawnMoves that calculates the forward move for a pawn.
+     * Adds valid moves to chessMoves.
+     *
+     * @param board the Chess Board
+     * @param startPosition the starting position of the piece
+     * @param nextPosition the position to calculate
+     * @param direction the direction the pawn is moving
+     * @param currentPiece the current piece
+     * @param chessMoves the list of ChessMoves
+     */
+    private static void calculatePawnForwardMove(ChessBoard board, ChessPosition startPosition, ChessPosition nextPosition, Direction direction,
+                                                 ChessPiece currentPiece, HashSet<ChessMove> chessMoves) {
+        int polarity = (currentPiece.getTeamColor() == ChessGame.TeamColor.WHITE) ? 1 : -1;
+        if (board.getPiece(nextPosition) == null) {
+            if (!pawnHasMoved(startPosition, currentPiece.getTeamColor())) {
+                ChessPosition doubleMove = new ChessPosition(nextPosition.getRow() + direction.yVector()*polarity,
+                        startPosition.getColumn());
+                if (board.getPiece(doubleMove) == null) {
+                    chessMoves.add(new ChessMove(startPosition, doubleMove, null));
+                }
+            }
+            addPawnMove(startPosition, nextPosition, chessMoves);
+        }
+    }
+
+    /**
+     * A helper method for calculatePawnMoves that calculates the diagonal moves for a pawn.
+     * Adds valid moves to chessMoves.
+     *
+     * @param board the Chess Board
+     * @param startPosition the starting position of the piece
+     * @param nextPosition the position to calculate
+     * @param currentPiece the current piece
+     * @param chessMoves the list of ChessMoves
+     */
+    private static void calculatePawnDiagonalMove(ChessBoard board, ChessPosition startPosition, ChessPosition nextPosition, ChessPiece currentPiece,
+                                                  HashSet<ChessMove> chessMoves) {
+        if (board.getPiece(nextPosition) != null
+                && board.getPiece(nextPosition).getTeamColor() != currentPiece.getTeamColor()) {
+            addPawnMove(startPosition, nextPosition, chessMoves);
+        }
     }
 
     /**
@@ -113,7 +162,7 @@ public class PieceMoveService {
      */
     private static void addPawnMove(ChessPosition startPosition, ChessPosition nextPosition, Collection<ChessMove> chessMoves) {
         if (nextPosition.getRow() == 8 || nextPosition.getRow() == 1) {
-            for (ChessPiece.PieceType type : promotionPieceTypes) {
+            for (ChessPiece.PieceType type : PROMOTION_PIECE_TYPES) {
                 chessMoves.add(new ChessMove(startPosition, nextPosition, type));
             }
         } else {
@@ -129,8 +178,11 @@ public class PieceMoveService {
      * @return true if the pawn has moved, false if not
      */
     private static Boolean pawnHasMoved(ChessPosition startPosition, ChessGame.TeamColor color) {
-        if (color == ChessGame.TeamColor.WHITE) return startPosition.getRow() != 2;
-        else return startPosition.getRow() != 7;
+        if (color == ChessGame.TeamColor.WHITE) {
+            return startPosition.getRow() != 2;
+        } else {
+            return startPosition.getRow() != 7;
+        }
     }
 
     /**

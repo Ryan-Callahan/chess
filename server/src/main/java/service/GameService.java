@@ -1,7 +1,7 @@
 package service;
 
 import chess.ChessGame;
-import dataAccess.DataAccessException;
+import dataaccess.DataAccessException;
 import model.GameData;
 import model.request.CreateGameRequest;
 import model.request.JoinGameRequest;
@@ -16,10 +16,10 @@ public class GameService extends AuthService implements Service {
     private int gameIDCtr = 1;
 
     public Result listGames(ListGamesRequest listGamesRequest) {
-        if (!authDAO.existsAuth(listGamesRequest.authToken())) {
+        if (!AUTH_DAO.existsAuth(listGamesRequest.authToken())) {
             return new Result(401, new ErrorResult("Error: unauthorized"));
         }
-        Collection<GameData> games = gameDAO.listGames();
+        Collection<GameData> games = GAME_DAO.listGames();
         return new Result(200, new ListGamesResult(games));
     }
 
@@ -27,13 +27,13 @@ public class GameService extends AuthService implements Service {
         CreateGameRequest createGameRequest = ((CreateGameRequest) request.request());
         String gameName = createGameRequest.gameName();
         String authToken = request.authToken();
-        if (!authDAO.existsAuth(authToken)) {
+        if (!AUTH_DAO.existsAuth(authToken)) {
             return new Result(401, new ErrorResult("Error: unauthorized"));
         }
         int gameID = gameIDCtr++;
         var newGame = new GameData(gameID, null, null, gameName, new ChessGame());
         try {
-            gameDAO.createGame(newGame);
+            GAME_DAO.createGame(newGame);
             return new Result(200, new CreateGameResult(gameID));
         } catch (DataAccessException e) {
             return new Result(400, new ErrorResult(e.getMessage()));
@@ -48,13 +48,13 @@ public class GameService extends AuthService implements Service {
         String username;
         GameData game;
         try {
-            username = authDAO.getAuthByToken(authToken).username();
+            username = AUTH_DAO.getAuthByToken(authToken).username();
         } catch (DataAccessException e) {
             return new Result(401, new ErrorResult(e.getMessage()));
         }
 
         try {
-            game = gameDAO.getGame(gameID);
+            game = GAME_DAO.getGame(gameID);
         } catch (DataAccessException e) {
             return new Result(400, new ErrorResult(e.getMessage()));
         }
@@ -88,7 +88,7 @@ public class GameService extends AuthService implements Service {
         } else {
             try {
                 GameData gameUpdate = updatePlayerColor(game, joinColor, username);
-                gameDAO.updateGame(gameUpdate);
+                GAME_DAO.updateGame(gameUpdate);
                 return new Result(200, new EmptyResult());
             } catch (DataAccessException e) {
                 return new Result(400, new ErrorResult(e.getMessage()));

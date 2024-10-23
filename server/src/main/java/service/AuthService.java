@@ -13,7 +13,7 @@ public class AuthService implements Service {
 
     protected Result createAuth(String username) {
         var newAuth = new AuthData(generateAuthToken(), username);
-        authDAO.createAuth(newAuth);
+        AUTH_DAO.createAuth(newAuth);
         return new Result(200, new LoginResult(newAuth.authToken(), username));
     }
 }

@@ -69,7 +69,9 @@ public class ChessGame {
         ChessPiece piece = chessBoard.getPiece(move.getStartPosition());
         Collection<ChessMove> validMoves = validMoves(move.getStartPosition());
         if (validMoves != null && validMoves.contains(move) && !isInCheckAfterMove(move, piece.getTeamColor()) && isTeamsTurn(piece.getTeamColor())) {
-            if (move.getPromotionPiece() != null) piece.setPieceType(move.getPromotionPiece());
+            if (move.getPromotionPiece() != null) {
+                piece.setPieceType(move.getPromotionPiece());
+            }
             movePiece(move, piece);
             setNextTeamTurn(piece.getTeamColor());
         } else {

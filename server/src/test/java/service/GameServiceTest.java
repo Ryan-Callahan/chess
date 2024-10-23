@@ -1,7 +1,7 @@
 package service;
 
 import chess.ChessGame;
-import dataAccess.DataAccessException;
+import dataaccess.DataAccessException;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
@@ -29,10 +29,10 @@ public class GameServiceTest {
     void setup() throws DataAccessException {
         gameService = new GameService();
         gameService.clearAllDB();
-        userDAO.createUser(new UserData("username", "password", "email"));
-        userDAO.createUser(new UserData("username2", "password2", "email2"));
-        authDAO.createAuth(new AuthData("testToken", "username"));
-        authDAO.createAuth(new AuthData("testToken2", "username2"));
+        USER_DAO.createUser(new UserData("username", "password", "email"));
+        USER_DAO.createUser(new UserData("username2", "password2", "email2"));
+        AUTH_DAO.createAuth(new AuthData("testToken", "username"));
+        AUTH_DAO.createAuth(new AuthData("testToken2", "username2"));
     }
 
     @Test
@@ -61,7 +61,7 @@ public class GameServiceTest {
     @Test
     @DisplayName("Should correctly join a game")
     void joinGameTest() throws DataAccessException {
-        gameDAO.createGame(new GameData(1, null, null, "testGame", new ChessGame()));
+        GAME_DAO.createGame(new GameData(1, null, null, "testGame", new ChessGame()));
         JoinGameRequest joinGameRequest = new JoinGameRequest("WHITE", 1);
         RequestWithAuth request = new RequestWithAuth("testToken", joinGameRequest);
         var response = gameService.joinGame(request);
@@ -78,7 +78,7 @@ public class GameServiceTest {
     @Test
     @DisplayName("Should return an error when player color is already occupied")
     void colorTakenTest() throws DataAccessException {
-        gameDAO.createGame(new GameData(1, null, null, "testGame", new ChessGame()));
+        GAME_DAO.createGame(new GameData(1, null, null, "testGame", new ChessGame()));
         JoinGameRequest joinGameRequest = new JoinGameRequest("WHITE", 1);
         RequestWithAuth request = new RequestWithAuth("testToken", joinGameRequest);
         var response = gameService.joinGame(request);
@@ -95,7 +95,7 @@ public class GameServiceTest {
     @Test
     @DisplayName("Should return an error when joining with incorrect auth token")
     void invalidAuthTest() throws DataAccessException {
-        gameDAO.createGame(new GameData(1, null, null, "testGame", new ChessGame()));
+        GAME_DAO.createGame(new GameData(1, null, null, "testGame", new ChessGame()));
         JoinGameRequest joinGameRequest = new JoinGameRequest("WHITE", 1);
         RequestWithAuth request = new RequestWithAuth("invalidTestToken", joinGameRequest);
         var response = gameService.joinGame(request);
@@ -106,7 +106,7 @@ public class GameServiceTest {
     @Test
     @DisplayName("Should return an error when joining a nonexistent game")
     void invalidGameTest() throws DataAccessException {
-        gameDAO.createGame(new GameData(1, null, null, "testGame", new ChessGame()));
+        GAME_DAO.createGame(new GameData(1, null, null, "testGame", new ChessGame()));
         JoinGameRequest joinGameRequest = new JoinGameRequest("WHITE", 2);
         RequestWithAuth request = new RequestWithAuth("testToken", joinGameRequest);
         var response = gameService.joinGame(request);
@@ -120,9 +120,9 @@ public class GameServiceTest {
         var game1 = new GameData(1, null, null, "testGame", new ChessGame());
         var game2 = new GameData(2, "username", "", "testGame2", new ChessGame());
         var game3 = new GameData(3, "", "username2", "testGame3", new ChessGame());
-        gameDAO.createGame(game1);
-        gameDAO.createGame(game2);
-        gameDAO.createGame(game3);
+        GAME_DAO.createGame(game1);
+        GAME_DAO.createGame(game2);
+        GAME_DAO.createGame(game3);
 
         ListGamesRequest listGamesRequest = new ListGamesRequest("testToken");
         var response = gameService.listGames(listGamesRequest);
@@ -140,7 +140,7 @@ public class GameServiceTest {
     @DisplayName("Should return an error when trying to list unauthorized")
     void unauthorizedListTest() throws DataAccessException {
         var game1 = new GameData(1, null, null, "testGame", new ChessGame());
-        gameDAO.createGame(game1);
+        GAME_DAO.createGame(game1);
         ListGamesRequest listGamesRequest = new ListGamesRequest("invalidTestToken");
         var response = gameService.listGames(listGamesRequest);
         Assertions.assertEquals(401, response.statusCode());

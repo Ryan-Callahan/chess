@@ -29,10 +29,16 @@ public class ChessBoard {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         ChessBoard that = (ChessBoard) o;
-        return Objects.equals(chessBoard, that.chessBoard) && Objects.equals(whitePieces, that.whitePieces) && Objects.equals(blackPieces, that.blackPieces);
+        return Objects.equals(chessBoard, that.chessBoard)
+                && Objects.equals(whitePieces, that.whitePieces)
+                && Objects.equals(blackPieces, that.blackPieces);
     }
 
     @Override
@@ -48,9 +54,13 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        if (getPiece(position) != null) removePositionFromTeam(position);
+        if (getPiece(position) != null) {
+            removePositionFromTeam(position);
+        }
         chessBoard.get(position.getRow()).put(position.getColumn(), piece);
-        if (piece != null) addPositionToTeam(position);
+        if (piece != null) {
+            addPositionToTeam(position);
+        }
     }
 
     /**

@@ -1,6 +1,6 @@
 package service;
 
-import dataAccess.DataAccessException;
+import dataaccess.DataAccessException;
 import model.UserData;
 import model.request.LoginRequest;
 import model.request.LogoutRequest;
@@ -20,7 +20,7 @@ public class UserService extends AuthService implements Service {
         var newUser = new UserData(username, password, email);
         try {
             if (password != null) {
-                userDAO.createUser(newUser);
+                USER_DAO.createUser(newUser);
                 return login(new LoginRequest(username, password));
             } else {
                 return new Result(400, new ErrorResult("Error: bad request"));
@@ -34,7 +34,7 @@ public class UserService extends AuthService implements Service {
         String username = loginRequest.username();
         String password = loginRequest.password();
         try {
-            var user = userDAO.getUser(username);
+            var user = USER_DAO.getUser(username);
             if (isPasswordCorrect(user, password)) {
                 return createAuth(username);
             } else {
@@ -48,7 +48,7 @@ public class UserService extends AuthService implements Service {
     public Result logout(LogoutRequest logoutRequest) {
         String authToken = logoutRequest.authToken();
         try {
-            authDAO.removeAuth(authToken);
+            AUTH_DAO.removeAuth(authToken);
             return new Result(200, new EmptyResult());
         } catch (DataAccessException e) {
             var responseBody = new ErrorResult(e.getMessage());

@@ -1,25 +1,25 @@
 package service;
 
-import dataAccess.memoryDAO.MemoryAuthDAO;
-import dataAccess.memoryDAO.MemoryGameDAO;
-import dataAccess.memoryDAO.MemoryUserDAO;
-import dataAccess.AuthDAO;
-import dataAccess.GameDAO;
-import dataAccess.UserDAO;
+import dataaccess.memorydao.MemoryAuthDAO;
+import dataaccess.memorydao.MemoryGameDAO;
+import dataaccess.memorydao.MemoryUserDAO;
+import dataaccess.AuthDAO;
+import dataaccess.GameDAO;
+import dataaccess.UserDAO;
 import model.result.EmptyResult;
 import model.result.ErrorResult;
 import model.result.Result;
 
 public interface Service {
-    GameDAO gameDAO = new MemoryGameDAO();
-    UserDAO userDAO = new MemoryUserDAO();
-    AuthDAO authDAO = new MemoryAuthDAO();
+    GameDAO GAME_DAO = new MemoryGameDAO();
+    UserDAO USER_DAO = new MemoryUserDAO();
+    AuthDAO AUTH_DAO = new MemoryAuthDAO();
 
     default Result clearAllDB() {
         try {
-            gameDAO.clear();
-            userDAO.clear();
-            authDAO.clear();
+            GAME_DAO.clear();
+            USER_DAO.clear();
+            AUTH_DAO.clear();
             return new Result(200, new EmptyResult());
         } catch (Exception e) {
             return new Result(500, new ErrorResult(e.getMessage()));
