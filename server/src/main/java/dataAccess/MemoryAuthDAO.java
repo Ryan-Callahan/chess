@@ -40,13 +40,4 @@ public class MemoryAuthDAO implements AuthDAO {
     public Boolean existsAuth(String authToken) {
         return authTable.containsKey(authToken);
     }
-
-    private Boolean usernameExists(String username) {
-        for (AuthData auth : authTable.values()) {
-            if (Objects.equals(username, auth.username())) {
-                return true;
-            }
-        }
-        return false;
-    }
 }
