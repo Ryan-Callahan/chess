@@ -1,6 +1,7 @@
-package dataAccess;
+package dataAccess.memoryDAO;
 
-import dataAccess.interfaces.GameDAO;
+import dataAccess.DataAccessException;
+import dataAccess.GameDAO;
 import model.GameData;
 
 import java.util.Collection;

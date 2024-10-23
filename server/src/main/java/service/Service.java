@@ -1,11 +1,11 @@
 package service;
 
-import dataAccess.MemoryAuthDAO;
-import dataAccess.MemoryGameDAO;
-import dataAccess.MemoryUserDAO;
-import dataAccess.interfaces.AuthDAO;
-import dataAccess.interfaces.GameDAO;
-import dataAccess.interfaces.UserDAO;
+import dataAccess.memoryDAO.MemoryAuthDAO;
+import dataAccess.memoryDAO.MemoryGameDAO;
+import dataAccess.memoryDAO.MemoryUserDAO;
+import dataAccess.AuthDAO;
+import dataAccess.GameDAO;
+import dataAccess.UserDAO;
 import model.result.EmptyResult;
 import model.result.ErrorResult;
 import model.result.Result;
