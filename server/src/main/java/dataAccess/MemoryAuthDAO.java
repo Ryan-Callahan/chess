@@ -4,7 +4,6 @@ import dataAccess.interfaces.AuthDAO;
 import model.AuthData;
 
 import java.util.HashMap;
-import java.util.Objects;
 
 public class MemoryAuthDAO implements AuthDAO {
     private HashMap<String, AuthData> authTable = new HashMap<>();
