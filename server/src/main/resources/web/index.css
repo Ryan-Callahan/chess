@@ -1,7 +1,7 @@
 html {
   font-family: sans-serif;
-  background: #f7f0e0;
-  color: #343434;
+  background: #343434;
+  color: rgba(116, 183, 246, 0.92);
 }
 body {
   max-width: 80em;
@@ -13,13 +13,13 @@ table {
   font-size: 2em;
 }
 td {
-  background: #dad6bf;
+  background: rgba(218, 214, 191, 0.1);
   padding: 1em;
   border-radius: 5px;
 }
 .endpoint {
-  background: #b8b5a2;
-  color: rgb(84 84 68);
+  background: #545444;
+  color: rgba(108, 178, 252, 0.73);
   text-decoration: none;
   font-weight: 600;
   padding: 0 1em;
@@ -52,6 +52,8 @@ textarea {
   padding: 0.25em;
 }
 textarea {
+  background: rgba(18, 44, 108, 0.4);
+  color: #c9aa59;
   height: 20em;
   padding: 1em;
 }
@@ -60,7 +62,7 @@ textarea {
 }
 .box {
   border-radius: 5px;
-  background: #dad6bf;
+  background: rgba(21, 58, 138, 0.5);
   padding: 0.5em 2em 2em;
   margin: 1em;
 }
@@ -82,10 +84,15 @@ button:active {
   background-color: #373003;
 }
 #response {
-  color: #4e3e15;
+  color: #c9aa59;
 }
 code {
-  background-color: #e8e0cb;
+  background-color: rgba(232, 224, 203, 0.29);
   border-radius: 5px;
   padding: 0.05em;
 }
+input {
+  background: rgba(18, 44, 108, 0.4);
+  color: #c9aa59;
+}
+
