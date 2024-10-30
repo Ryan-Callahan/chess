@@ -9,7 +9,7 @@ public interface AuthDAO {
 
     void removeAuth(String authToken) throws DataAccessException;
 
-    void clear();
+    void clear() throws DataAccessException;
 
     Boolean existsAuth(String authToken);
 }

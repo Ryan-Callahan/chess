@@ -4,35 +4,74 @@ import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import model.AuthData;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.sql.Types.NULL;
 
 public class MySQLAuthDAO implements AuthDAO {
+    public MySQLAuthDAO() {
+        try {
+            configureDatabase();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
     @Override
-    public void createAuth(AuthData auth) {
-
+    public void createAuth(AuthData auth) throws DataAccessException {
+        var statement = "INSERT INTO auth (authToken, username) VALUES (?, ?)";
+        executeUpdate(statement, auth.authToken(), auth.username());
     }
 
     @Override
     public AuthData getAuthByToken(String authToken) throws DataAccessException {
-        return null;
+        try (var connection = DatabaseManager.getConnection()) {
+            var statement = "SELECT * FROM auth WHERE authToken=?";
+            try (var preparedStatement = connection.prepareStatement(statement)) {
+                preparedStatement.setString(1, authToken);
+                try (var resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        return readAuth(resultSet);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(String.format("Error: Unable to read data: %s", e.getMessage()));
+        }
+        throw new DataAccessException("Error: unauthorized");
     }
 
     @Override
     public void removeAuth(String authToken) throws DataAccessException {
-
+        if (existsAuth(authToken)) {
+            var statement = "DELETE FROM auth WHERE authToken=?";
+            executeUpdate(statement, authToken);
+        } else {
+            throw new DataAccessException("Error: unauthorized");
+        }
     }
 
     @Override
-    public void clear() {
-
+    public void clear() throws DataAccessException {
+        var statement = "TRUNCATE auth";
+        executeUpdate(statement);
     }
 
     @Override
     public Boolean existsAuth(String authToken) {
-        return null;
+        try {
+            getAuthByToken(authToken);
+            return true;
+        } catch (DataAccessException ignored) {
+            return false;
+        }
+    }
+
+    private AuthData readAuth(ResultSet resultSet) throws SQLException {
+        var authToken = resultSet.getString("authToken");
+        var username = resultSet.getString("username");
+        return new AuthData(authToken, username);
     }
 
     private int executeUpdate(String statement, Object... params) throws DataAccessException {
@@ -44,16 +83,10 @@ public class MySQLAuthDAO implements AuthDAO {
                     else if (param == null) preparedStatement.setNull(i + 1, NULL);
                 }
                 preparedStatement.executeUpdate();
-
-                var returnStatement = preparedStatement.getGeneratedKeys();
-                if (returnStatement.next()) {
-                    return returnStatement.getInt(1);
-                }
-
                 return 0;
             }
         } catch (SQLException e) {
-            throw new DataAccessException(String.format("Unable to update database: %s, %s", statement, e.getMessage()));
+            throw new DataAccessException(String.format("Error: Unable to update database: %s, %s", statement, e.getMessage()));
         }
     }
 
@@ -77,7 +110,7 @@ public class MySQLAuthDAO implements AuthDAO {
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException(String.format("Unable to configure database: %s", e.getMessage()));
+            throw new DataAccessException(String.format("Error: Unable to configure database: %s", e.getMessage()));
         }
     }
 }
