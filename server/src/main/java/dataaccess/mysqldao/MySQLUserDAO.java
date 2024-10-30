@@ -3,8 +3,6 @@ package dataaccess.mysqldao;
 import dataaccess.DataAccessException;
 import dataaccess.UserDAO;
 import model.UserData;
-import org.mindrot.jbcrypt.BCrypt;
-import server.serializer.GSerializer;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,6 +11,13 @@ import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.sql.Types.NULL;
 
 public class MySQLUserDAO implements UserDAO {
+    public MySQLUserDAO() {
+        try {
+            configureDatabase();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
     @Override
     public void createUser(UserData user) throws DataAccessException {
         var statement = "INSERT INTO user (username, password, email) VALUES (?, ?, ?)";
@@ -41,10 +46,6 @@ public class MySQLUserDAO implements UserDAO {
     public void clear() throws DataAccessException {
         var statement = "TRUNCATE user";
         executeUpdate(statement);
-    }
-
-    private String hashPassword(String password) {
-        return BCrypt.hashpw(password, BCrypt.gensalt());
     }
 
     private UserData readUser(ResultSet resultSet) throws SQLException {
@@ -92,7 +93,7 @@ public class MySQLUserDAO implements UserDAO {
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException(String.format("Unable to configure database: %s", e.getMessage()));
+            throw new DataAccessException(String.format("Error: Unable to configure database: %s", e.getMessage()));
         }
     }
 }

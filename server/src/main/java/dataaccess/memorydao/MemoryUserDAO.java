@@ -12,7 +12,8 @@ public class MemoryUserDAO implements UserDAO {
     @Override
     public void createUser(UserData user) throws DataAccessException {
         if (!userTable.containsKey(user.username())) {
-            userTable.put(user.username(), user);
+            var hashedUserData = new UserData(user.username(), hashPassword(user.password()), user.email());
+            userTable.put(user.username(), hashedUserData);
         } else {
             throw new DataAccessException("Error: already taken");
         }
