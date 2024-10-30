@@ -1,4 +1,6 @@
-package dataaccess;
+package dataaccess.mysqldao;
+
+import dataaccess.DataAccessException;
 
 import java.sql.*;
 import java.util.Properties;
@@ -36,7 +38,7 @@ public class DatabaseManager {
     /**
      * Creates the database if it does not already exist.
      */
-    static void createDatabase() throws DataAccessException {
+    protected static void createDatabase() throws DataAccessException {
         try {
             var statement = "CREATE DATABASE IF NOT EXISTS " + DATABASE_NAME;
             var conn = DriverManager.getConnection(CONNECTION_URL, USER, PASSWORD);
