@@ -33,7 +33,7 @@ public class MySQLUserDAO implements UserDAO {
         } catch (SQLException e) {
             throw new DataAccessException(String.format("Unable to read data: %s", e.getMessage()));
         }
-        return null;
+        throw new DataAccessException("Error: unauthorized");
     }
 
     @Override
@@ -65,13 +65,13 @@ public class MySQLUserDAO implements UserDAO {
                 return 0;
             }
         } catch (SQLException e) {
-            throw new DataAccessException(String.format("Unable to update database: %s, %s", statement, e.getMessage()));
+            throw new DataAccessException(String.format("Error: Unable to update database: %s, %s", statement, e.getMessage()));
         }
     }
 
     private final String[] createStatements = {
         """
-        CREATE TABLE IF NOT EXISTS `user` (
+        CREATE TABLE IF NOT EXISTS user (
             `username` varchar(45) NOT NULL,
             `password` varchar(100) NOT NULL,
             `email` varchar(100) NOT NULL,
