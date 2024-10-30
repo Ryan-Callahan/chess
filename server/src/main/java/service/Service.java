@@ -8,13 +8,14 @@ import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
 import dataaccess.mysqldao.MySQLAuthDAO;
+import dataaccess.mysqldao.MySQLGameDAO;
 import dataaccess.mysqldao.MySQLUserDAO;
 import model.result.EmptyResult;
 import model.result.ErrorResult;
 import model.result.Result;
 
 public interface Service {
-    GameDAO GAME_DAO = new MemoryGameDAO();
+    GameDAO GAME_DAO = new MySQLGameDAO();
     UserDAO USER_DAO = new MySQLUserDAO();
     AuthDAO AUTH_DAO = new MySQLAuthDAO();
 
