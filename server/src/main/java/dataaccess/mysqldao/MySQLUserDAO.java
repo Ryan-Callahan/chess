@@ -37,7 +37,7 @@ public class MySQLUserDAO implements UserDAO {
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException(String.format("Unable to read data: %s", e.getMessage()));
+            throw new DataAccessException(String.format("Error: Unable to read data: %s", e.getMessage()));
         }
         throw new DataAccessException("Error: unauthorized");
     }
