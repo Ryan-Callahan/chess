@@ -8,6 +8,7 @@ import model.request.RegisterRequest;
 import model.result.EmptyResult;
 import model.result.ErrorResult;
 import model.result.Result;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.Objects;
 
@@ -61,6 +62,6 @@ public class UserService extends AuthService implements Service {
     }
 
     private Boolean isPasswordCorrect(UserData user, String password) {
-        return Objects.equals(user.password(), password);
+        return BCrypt.checkpw(password, user.password());
     }
 }

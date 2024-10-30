@@ -3,6 +3,7 @@ package dataaccess.mysqldao;
 import dataaccess.DataAccessException;
 import dataaccess.UserDAO;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 import server.serializer.GSerializer;
 
 import java.sql.ResultSet;
@@ -43,7 +44,7 @@ public class MySQLUserDAO implements UserDAO {
     }
 
     private String hashPassword(String password) {
-        return password;
+        return BCrypt.hashpw(password, BCrypt.gensalt());
     }
 
     private UserData readUser(ResultSet resultSet) throws SQLException {
