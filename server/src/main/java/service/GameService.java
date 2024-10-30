@@ -19,8 +19,12 @@ public class GameService extends AuthService implements Service {
         if (!AUTH_DAO.existsAuth(listGamesRequest.authToken())) {
             return new Result(401, new ErrorResult("Error: unauthorized"));
         }
-        Collection<GameData> games = GAME_DAO.listGames();
-        return new Result(200, new ListGamesResult(games));
+        try {
+            Collection<GameData> games = GAME_DAO.listGames();
+            return new Result(200, new ListGamesResult(games));
+        } catch (DataAccessException e) {
+            return new Result(500, new ErrorResult(e.getMessage()));
+        }
     }
 
     public Result createGame(RequestWithAuth request) {
