@@ -55,7 +55,7 @@ public class MySQLUserDAO implements UserDAO {
         return new UserData(username, password, email);
     }
 
-    private int executeUpdate(String statement, Object... params) throws DataAccessException {
+    private void executeUpdate(String statement, Object... params) throws DataAccessException {
         try (var connection = DatabaseManager.getConnection()) {
             try (var preparedStatement = connection.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
                 for (int i = 0; i < params.length; i++) {
@@ -64,7 +64,6 @@ public class MySQLUserDAO implements UserDAO {
                     else if (param == null) preparedStatement.setNull(i + 1, NULL);
                 }
                 preparedStatement.executeUpdate();
-                return 0;
             }
         } catch (SQLException e) {
             throw new DataAccessException(String.format("Error: Unable to update database: %s, %s", statement, e.getMessage()));
