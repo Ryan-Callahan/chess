@@ -1,6 +1,8 @@
 package service;
 
+import dataaccess.DataAccessException;
 import model.AuthData;
+import model.result.ErrorResult;
 import model.result.LoginResult;
 import model.result.Result;
 
@@ -13,7 +15,11 @@ public class AuthService implements Service {
 
     protected Result createAuth(String username) {
         var newAuth = new AuthData(generateAuthToken(), username);
-        AUTH_DAO.createAuth(newAuth);
-        return new Result(200, new LoginResult(newAuth.authToken(), username));
+        try {
+            AUTH_DAO.createAuth(newAuth);
+            return new Result(200, new LoginResult(newAuth.authToken(), username));
+        } catch (DataAccessException e) {
+            return new Result(500, new ErrorResult(e.getMessage()));
+        }
     }
 }
