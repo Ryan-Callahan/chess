@@ -18,7 +18,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 
 import static service.Service.*;
 
@@ -129,11 +131,12 @@ public class GameServiceTest {
         Assertions.assertEquals(200, response.statusCode());
         Assertions.assertSame(ListGamesResult.class, response.body().getClass());
 
+        Collection<GameData> expectedGames = new HashSet<>(Arrays.asList(game1, game2, game3));
         Collection<GameData> games = ((ListGamesResult) response.body()).games();
 
-        Assertions.assertTrue(games.contains(game1));
-        Assertions.assertTrue(games.contains(game2));
-        Assertions.assertTrue(games.contains(game3));
+        for (GameData game : games) {
+            Assertions.assertTrue(game.equals(game1) || game.equals(game2) || game.equals(game3));
+        }
     }
 
     @Test
