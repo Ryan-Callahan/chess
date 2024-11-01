@@ -7,14 +7,15 @@ import model.UserData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import static dataaccess.mysqldao.DatabaseManager.TESTS;
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.sql.Types.NULL;
 
 public class MySQLUserDAO implements UserDAO {
     private final String userTable;
     private final String[] createStatements;
-    public MySQLUserDAO(Boolean tests) {
-        if (tests) {
+    public MySQLUserDAO() {
+        if (TESTS) {
             userTable = "testuser";
         } else {
             userTable = "user";
@@ -25,10 +26,6 @@ public class MySQLUserDAO implements UserDAO {
         } catch (DataAccessException e) {
             throw new RuntimeException(e.getMessage());
         }
-    }
-
-    public MySQLUserDAO() {
-        this(false);
     }
 
     @Override

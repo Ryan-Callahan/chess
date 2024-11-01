@@ -7,6 +7,7 @@ import model.AuthData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import static dataaccess.mysqldao.DatabaseManager.TESTS;
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.sql.Types.NULL;
 
@@ -14,8 +15,8 @@ public class MySQLAuthDAO implements AuthDAO {
     private final String authTable;
     private final String[] createStatements;
 
-    public MySQLAuthDAO(Boolean tests) {
-        if (tests) {
+    public MySQLAuthDAO() {
+        if (TESTS) {
             authTable = "testauth";
         } else {
             authTable = "auth";
@@ -26,9 +27,6 @@ public class MySQLAuthDAO implements AuthDAO {
         } catch (DataAccessException e) {
             throw new RuntimeException(e.getMessage());
         }
-    }
-    public MySQLAuthDAO() {
-        this(false);
     }
 
     @Override

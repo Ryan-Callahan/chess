@@ -10,6 +10,7 @@ public class DatabaseManager {
     private static final String USER;
     private static final String PASSWORD;
     private static final String CONNECTION_URL;
+    protected static final Boolean TESTS;
 
     /*
      * Load the database information for the db.properties file.
@@ -29,6 +30,7 @@ public class DatabaseManager {
                 var host = props.getProperty("db.host");
                 var port = Integer.parseInt(props.getProperty("db.port"));
                 CONNECTION_URL = String.format("jdbc:mysql://%s:%d", host, port);
+                TESTS = Boolean.parseBoolean(props.getProperty("db.tests"));
             }
         } catch (Exception ex) {
             throw new RuntimeException("unable to process db.properties. " + ex.getMessage());

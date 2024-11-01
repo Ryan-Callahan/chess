@@ -8,20 +8,24 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 public class MySQLAuthDAOTest {
-    static MySQLAuthDAO testAuthDao = new MySQLAuthDAO(true);
-    final String testAuthToken = "testToken";
-    final String testUsername = "username";
-    final AuthData testAuth = new AuthData(testAuthToken, testUsername);
+    static MySQLAuthDAO testAuthDao = new MySQLAuthDAO();
+    static final String testAuthToken = "testToken";
+    final String testAuthToken2 = "testToken2";
+    static final String testUsername = "username";
+    final String testUsername2 = "username2";
+    static final AuthData testAuth = new AuthData(testAuthToken, testUsername);
+    final AuthData testAuth2 = new AuthData(testAuthToken2, testUsername2);
 
     @BeforeAll
     static void setup() throws DataAccessException {
         testAuthDao.clear();
+        testAuthDao.createAuth(testAuth);
     }
 
     @Test
     @DisplayName("Should create an auth correctly")
     void createAuthTest() throws DataAccessException {
-        testAuthDao.createAuth(testAuth);
+        testAuthDao.createAuth(testAuth2);
 
     }
 

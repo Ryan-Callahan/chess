@@ -11,14 +11,15 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashSet;
 
+import static dataaccess.mysqldao.DatabaseManager.TESTS;
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.sql.Types.NULL;
 
 public class MySQLGameDAO implements GameDAO {
     private final String gameTable;
     private final String[] createStatements;
-    public MySQLGameDAO(Boolean tests) {
-        if (tests) {
+    public MySQLGameDAO() {
+        if (TESTS) {
             gameTable = "testgame";
         } else {
             gameTable = "game";
@@ -29,10 +30,6 @@ public class MySQLGameDAO implements GameDAO {
         } catch (DataAccessException e) {
             throw new RuntimeException(e.getMessage());
         }
-    }
-
-    public MySQLGameDAO() {
-        this(false);
     }
 
     @Override
