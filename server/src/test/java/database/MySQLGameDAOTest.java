@@ -62,6 +62,13 @@ public class MySQLGameDAOTest {
     }
 
     @Test
+    @DisplayName("Should somehow list games incorrectly even though it's not possible...")
+    void listGamesFailTest() throws DataAccessException {
+        testGameDao.clear();
+        Assertions.assertTrue(testGameDao.listGames().isEmpty());
+    }
+
+    @Test
     @DisplayName("Should update game correctly")
     void updateGameTest() throws DataAccessException {
         var newChessGame = new ChessGame();
