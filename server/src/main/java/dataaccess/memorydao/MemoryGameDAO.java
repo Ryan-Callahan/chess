@@ -11,9 +11,10 @@ public class MemoryGameDAO implements GameDAO {
     private HashMap<Integer, GameData> gameTable = new HashMap<>();
 
     @Override
-    public void createGame(GameData game) throws DataAccessException {
+    public int createGame(GameData game) throws DataAccessException {
         if (!gameTable.containsValue(game)) {
             gameTable.put(game.gameID(), game);
+            return game.gameID();
         } else {
             throw new DataAccessException("Invalid Game; Game already exists!");
         }

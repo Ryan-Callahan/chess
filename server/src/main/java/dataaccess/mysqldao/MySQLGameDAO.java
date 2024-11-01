@@ -24,9 +24,9 @@ public class MySQLGameDAO implements GameDAO {
         }
     }
     @Override
-    public void createGame(GameData game) throws DataAccessException {
+    public int createGame(GameData game) throws DataAccessException {
         var statement = "INSERT INTO game (whiteUsername, blackUsername, name, chessGame) VALUES (?, ?, ?, ?)";
-        executeUpdate(statement, game.whiteUsername(), game.blackUsername(), game.gameName(), game.game());
+        return executeUpdate(statement, game.whiteUsername(), game.blackUsername(), game.gameName(), game.game());
     }
 
     @Override
@@ -87,7 +87,7 @@ public class MySQLGameDAO implements GameDAO {
         return new GameData(id, whiteUsername, blackUsername, gameName, GSerializer.deserialize(chessGame, ChessGame.class));
     }
 
-    private void executeUpdate(String statement, Object... params) throws DataAccessException {
+    private int executeUpdate(String statement, Object... params) throws DataAccessException {
         try (var connection = DatabaseManager.getConnection()) {
             try (var preparedStatement = connection.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
                 for (int i = 0; i < params.length; i++) {
@@ -98,6 +98,13 @@ public class MySQLGameDAO implements GameDAO {
                     else if (param == null) preparedStatement.setNull(i + 1, NULL);
                 }
                 preparedStatement.executeUpdate();
+
+                var resultSet = preparedStatement.getGeneratedKeys();
+                if (resultSet.next()) {
+                    return resultSet.getInt(1);
+                }
+
+                return 0;
             }
         } catch (SQLException e) {
             throw new DataAccessException(String.format("Error: Unable to update database: %s, %s", statement, e.getMessage()));

@@ -34,10 +34,10 @@ public class GameService extends AuthService implements Service {
         if (!AUTH_DAO.existsAuth(authToken)) {
             return new Result(401, new ErrorResult("Error: unauthorized"));
         }
-        int gameID = gameIDCtr++;
+        int gameID = gameIDCtr++; //only used by MemoryGameDAO. MySQL autoincrements gameID and returns that.
         var newGame = new GameData(gameID, null, null, gameName, new ChessGame());
         try {
-            GAME_DAO.createGame(newGame);
+            gameID = GAME_DAO.createGame(newGame);
             return new Result(200, new CreateGameResult(gameID));
         } catch (DataAccessException e) {
             return new Result(400, new ErrorResult(e.getMessage()));
