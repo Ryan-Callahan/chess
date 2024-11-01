@@ -11,23 +11,36 @@ import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.sql.Types.NULL;
 
 public class MySQLAuthDAO implements AuthDAO {
-    public MySQLAuthDAO() {
+    private final String authTable;
+    private final String[] createStatements;
+
+    public MySQLAuthDAO(Boolean tests) {
+        if (tests) {
+            authTable = "testauth";
+        } else {
+            authTable = "auth";
+        }
+        createStatements = getCreateStatements(authTable);
         try {
             configureDatabase();
         } catch (DataAccessException e) {
             throw new RuntimeException(e.getMessage());
         }
     }
+    public MySQLAuthDAO() {
+        this(false);
+    }
+
     @Override
     public void createAuth(AuthData auth) throws DataAccessException {
-        var statement = "INSERT INTO auth (authToken, username) VALUES (?, ?)";
+        var statement = "INSERT INTO " + authTable + " (authToken, username) VALUES (?, ?)";
         executeUpdate(statement, auth.authToken(), auth.username());
     }
 
     @Override
     public AuthData getAuthByToken(String authToken) throws DataAccessException {
         try (var connection = DatabaseManager.getConnection()) {
-            var statement = "SELECT * FROM auth WHERE authToken=?";
+            var statement = "SELECT * FROM " + authTable + " WHERE authToken=?";
             try (var preparedStatement = connection.prepareStatement(statement)) {
                 preparedStatement.setString(1, authToken);
                 try (var resultSet = preparedStatement.executeQuery()) {
@@ -45,7 +58,7 @@ public class MySQLAuthDAO implements AuthDAO {
     @Override
     public void removeAuth(String authToken) throws DataAccessException {
         if (existsAuth(authToken)) {
-            var statement = "DELETE FROM auth WHERE authToken=?";
+            var statement = "DELETE FROM " + authTable + " WHERE authToken=?";
             executeUpdate(statement, authToken);
         } else {
             throw new DataAccessException("Error: unauthorized");
@@ -54,7 +67,7 @@ public class MySQLAuthDAO implements AuthDAO {
 
     @Override
     public void clear() throws DataAccessException {
-        var statement = "TRUNCATE auth";
+        var statement = "TRUNCATE " + authTable;
         executeUpdate(statement);
     }
 
@@ -89,15 +102,17 @@ public class MySQLAuthDAO implements AuthDAO {
         }
     }
 
-    private final String[] createStatements = {
+    private String[] getCreateStatements(String authTable) {
+        return new String[]{
         """
-        CREATE TABLE IF NOT EXISTS `auth` (
+        CREATE TABLE IF NOT EXISTS `%s` (
           `authToken` varchar(200) NOT NULL,
           `username` varchar(45) NOT NULL,
           PRIMARY KEY (`authToken`),
           KEY `username` (`username`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-        """
+        """.formatted(authTable)
+        };
     };
 
     private void configureDatabase() throws DataAccessException {
