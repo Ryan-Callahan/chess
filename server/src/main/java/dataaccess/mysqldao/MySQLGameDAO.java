@@ -34,6 +34,9 @@ public class MySQLGameDAO implements GameDAO {
 
     @Override
     public int createGame(GameData game) throws DataAccessException {
+        if (isExistingGame(game)) {
+            throw new DataAccessException("Error: attempting to create an existing game!");
+        }
         var statement = "INSERT INTO " + gameTable + " (whiteUsername, blackUsername, name, chessGame) VALUES (?, ?, ?, ?)";
         return executeUpdate(statement, game.whiteUsername(), game.blackUsername(), game.gameName(), game.game());
     }
@@ -76,15 +79,22 @@ public class MySQLGameDAO implements GameDAO {
 
     @Override
     public void updateGame(GameData game) throws DataAccessException {
+        if (!isExistingGame(game)) {
+            throw new DataAccessException("Error: Could not find game to update!");
+        }
         var statement = "UPDATE " + gameTable + " SET whiteUsername = ?, blackUsername = ?, chessGame = ? WHERE id = ?";
-        var chessGame = GSerializer.serialize(game.game());
-        executeUpdate(statement, game.whiteUsername(), game.blackUsername(), chessGame, game.gameID());
+        executeUpdate(statement, game.whiteUsername(), game.blackUsername(), game.game(), game.gameID());
     }
 
     @Override
     public void clear() throws DataAccessException {
         var statement = "TRUNCATE " + gameTable;
         executeUpdate(statement);
+    }
+
+    private Boolean isExistingGame(GameData game) throws DataAccessException {
+        var gamesList = listGames().stream().map(GameData::gameID).toList();
+        return gamesList.contains(game.gameID());
     }
 
     private GameData readGame(ResultSet resultSet) throws SQLException {
