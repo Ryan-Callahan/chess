@@ -8,21 +8,21 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import static dataaccess.mysqldao.DatabaseManager.TESTS;
-import static java.sql.Statement.RETURN_GENERATED_KEYS;
-import static java.sql.Types.NULL;
+import static dataaccess.mysqldao.MySQLDAO.configureDatabase;
+import static dataaccess.mysqldao.MySQLDAO.executeUpdate;
 
 public class MySQLUserDAO implements UserDAO {
     private final String userTable;
-    private final String[] createStatements;
+
     public MySQLUserDAO() {
         if (TESTS) {
             userTable = "testuser";
         } else {
             userTable = "user";
         }
-        createStatements = getCreateStatements(userTable);
+        String[] createStatements = getCreateStatements(userTable);
         try {
-            configureDatabase();
+            configureDatabase(createStatements);
         } catch (DataAccessException e) {
             throw new RuntimeException(e.getMessage());
         }
@@ -65,21 +65,6 @@ public class MySQLUserDAO implements UserDAO {
         return new UserData(username, password, email);
     }
 
-    private void executeUpdate(String statement, Object... params) throws DataAccessException {
-        try (var connection = DatabaseManager.getConnection()) {
-            try (var preparedStatement = connection.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
-                for (int i = 0; i < params.length; i++) {
-                    var param = params[i];
-                    if (param instanceof  String p) preparedStatement.setString(i + 1, p);
-                    else if (param == null) preparedStatement.setNull(i + 1, NULL);
-                }
-                preparedStatement.executeUpdate();
-            }
-        } catch (SQLException e) {
-            throw new DataAccessException(String.format("Error: Unable to update database: %s, %s", statement, e.getMessage()));
-        }
-    }
-
     private String[] getCreateStatements(String userTable) {
         return new String[]{
         """
@@ -93,18 +78,5 @@ public class MySQLUserDAO implements UserDAO {
           ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
         """.formatted(userTable)
         };
-    }
-
-    private void configureDatabase() throws DataAccessException {
-        DatabaseManager.createDatabase();
-        try (var connection = DatabaseManager.getConnection()) {
-            for (var statement : createStatements) {
-                try (var preparedStatement = connection.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-        } catch (SQLException e) {
-            throw new DataAccessException(String.format("Error: Unable to configure database: %s", e.getMessage()));
-        }
     }
 }

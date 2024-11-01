@@ -12,21 +12,22 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import static dataaccess.mysqldao.DatabaseManager.TESTS;
+import static dataaccess.mysqldao.MySQLDAO.configureDatabase;
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.sql.Types.NULL;
 
 public class MySQLGameDAO implements GameDAO {
     private final String gameTable;
-    private final String[] createStatements;
+
     public MySQLGameDAO() {
         if (TESTS) {
             gameTable = "testgame";
         } else {
             gameTable = "game";
         }
-        createStatements = getCreateStatements(gameTable);
+        String[] createStatements = getCreateStatements(gameTable);
         try {
-            configureDatabase();
+            configureDatabase(createStatements);
         } catch (DataAccessException e) {
             throw new RuntimeException(e.getMessage());
         }
@@ -106,15 +107,24 @@ public class MySQLGameDAO implements GameDAO {
         return new GameData(id, whiteUsername, blackUsername, gameName, GSerializer.deserialize(chessGame, ChessGame.class));
     }
 
+
     private int executeUpdate(String statement, Object... params) throws DataAccessException {
         try (var connection = DatabaseManager.getConnection()) {
             try (var preparedStatement = connection.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
                 for (int i = 0; i < params.length; i++) {
                     var param = params[i];
-                    if (param instanceof  Integer p) preparedStatement.setInt(i + 1, p);
-                    if (param instanceof  String p) preparedStatement.setString(i + 1, p);
-                    if (param instanceof  ChessGame p) preparedStatement.setString(i + 1, GSerializer.serialize(p));
-                    else if (param == null) preparedStatement.setNull(i + 1, NULL);
+                    if (param instanceof  Integer p) {
+                        preparedStatement.setInt(i + 1, p);
+                    }
+                    if (param instanceof  String p) {
+                        preparedStatement.setString(i + 1, p);
+                    }
+                    if (param instanceof  ChessGame p) {
+                        preparedStatement.setString(i + 1, GSerializer.serialize(p));
+                    }
+                    else if (param == null) {
+                        preparedStatement.setNull(i + 1, NULL);
+                    }
                 }
                 preparedStatement.executeUpdate();
 
@@ -144,18 +154,5 @@ public class MySQLGameDAO implements GameDAO {
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
         """.formatted(gameTable)
         };
-    }
-
-    private void configureDatabase() throws DataAccessException {
-        DatabaseManager.createDatabase();
-        try (var connection = DatabaseManager.getConnection()) {
-            for (var statement : createStatements) {
-                try (var preparedStatement = connection.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-        } catch (SQLException e) {
-            throw new DataAccessException(String.format("Error: Unable to configure database: %s", e.getMessage()));
-        }
     }
 }

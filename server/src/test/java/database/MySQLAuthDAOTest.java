@@ -66,4 +66,16 @@ public class MySQLAuthDAOTest {
         testAuthDao.clear();
         Assertions.assertThrows(DataAccessException.class, () -> testAuthDao.getAuthByToken(testAuthToken));
     }
+
+    @Test
+    @DisplayName("should return true if auth exists")
+    void existsAuthTest() {
+        Assertions.assertTrue(testAuthDao.existsAuth(testAuthToken));
+    }
+
+    @Test
+    @DisplayName("should return false if auth exists")
+    void notExistsAuthTest() {
+        Assertions.assertFalse(testAuthDao.existsAuth(testAuthToken2));
+    }
 }
