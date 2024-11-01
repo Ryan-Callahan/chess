@@ -15,24 +15,36 @@ import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.sql.Types.NULL;
 
 public class MySQLGameDAO implements GameDAO {
-
-    public MySQLGameDAO() {
+    private final String gameTable;
+    private final String[] createStatements;
+    public MySQLGameDAO(Boolean tests) {
+        if (tests) {
+            gameTable = "testgame";
+        } else {
+            gameTable = "game";
+        }
+        createStatements = getCreateStatements(gameTable);
         try {
             configureDatabase();
         } catch (DataAccessException e) {
             throw new RuntimeException(e.getMessage());
         }
     }
+
+    public MySQLGameDAO() {
+        this(false);
+    }
+
     @Override
     public int createGame(GameData game) throws DataAccessException {
-        var statement = "INSERT INTO game (whiteUsername, blackUsername, name, chessGame) VALUES (?, ?, ?, ?)";
+        var statement = "INSERT INTO " + gameTable + " (whiteUsername, blackUsername, name, chessGame) VALUES (?, ?, ?, ?)";
         return executeUpdate(statement, game.whiteUsername(), game.blackUsername(), game.gameName(), game.game());
     }
 
     @Override
     public GameData getGame(int gameID) throws DataAccessException {
         try (var connection = DatabaseManager.getConnection()) {
-            var statement = "SELECT * FROM game WHERE id=?";
+            var statement = "SELECT * FROM " + gameTable + " WHERE id=?";
             try (var preparedStatement = connection.prepareStatement(statement)) {
                 preparedStatement.setInt(1, gameID);
                 try (var resultSet = preparedStatement.executeQuery()) {
@@ -51,7 +63,7 @@ public class MySQLGameDAO implements GameDAO {
     public Collection<GameData> listGames() throws DataAccessException {
         var result = new HashSet<GameData>();
         try (var connection = DatabaseManager.getConnection()) {
-            var statement = "SELECT * FROM game";
+            var statement = "SELECT * FROM " + gameTable;
             try (var preparedStatement = connection.prepareStatement(statement)) {
                 try (var resultSet = preparedStatement.executeQuery()) {
                     while (resultSet.next()) {
@@ -67,14 +79,14 @@ public class MySQLGameDAO implements GameDAO {
 
     @Override
     public void updateGame(GameData game) throws DataAccessException {
-        var statement = "UPDATE game SET whiteUsername = ?, blackUsername = ?, chessGame = ? WHERE id = ?";
+        var statement = "UPDATE " + gameTable + " SET whiteUsername = ?, blackUsername = ?, chessGame = ? WHERE id = ?";
         var chessGame = GSerializer.serialize(game.game());
         executeUpdate(statement, game.whiteUsername(), game.blackUsername(), chessGame, game.gameID());
     }
 
     @Override
     public void clear() throws DataAccessException {
-        var statement = "TRUNCATE game";
+        var statement = "TRUNCATE " + gameTable;
         executeUpdate(statement);
     }
 
@@ -111,9 +123,10 @@ public class MySQLGameDAO implements GameDAO {
         }
     }
 
-    private final String[] createStatements = {
+    private String[] getCreateStatements(String gameTable) {
+        return new String[]{
         """
-        CREATE TABLE IF NOT EXISTS `game` (
+        CREATE TABLE IF NOT EXISTS `%s` (
           `id` int NOT NULL AUTO_INCREMENT,
           `whiteUsername` varchar(45) DEFAULT NULL,
           `blackUsername` varchar(45) DEFAULT NULL,
@@ -122,8 +135,9 @@ public class MySQLGameDAO implements GameDAO {
           PRIMARY KEY (`id`),
           UNIQUE KEY `id_UNIQUE` (`id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-        """
-    };
+        """.formatted(gameTable)
+        };
+    }
 
     private void configureDatabase() throws DataAccessException {
         DatabaseManager.createDatabase();

@@ -11,23 +11,36 @@ import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.sql.Types.NULL;
 
 public class MySQLUserDAO implements UserDAO {
-    public MySQLUserDAO() {
+    private final String userTable;
+    private final String[] createStatements;
+    public MySQLUserDAO(Boolean tests) {
+        if (tests) {
+            userTable = "testuser";
+        } else {
+            userTable = "user";
+        }
+        createStatements = getCreateStatements(userTable);
         try {
             configureDatabase();
         } catch (DataAccessException e) {
             throw new RuntimeException(e.getMessage());
         }
     }
+
+    public MySQLUserDAO() {
+        this(false);
+    }
+
     @Override
     public void createUser(UserData user) throws DataAccessException {
-        var statement = "INSERT INTO user (username, password, email) VALUES (?, ?, ?)";
+        var statement = "INSERT INTO " + userTable + " (username, password, email) VALUES (?, ?, ?)";
         executeUpdate(statement, user.username(), hashPassword(user.password()), user.email());
     }
 
     @Override
     public UserData getUser(String username) throws DataAccessException {
         try (var connection = DatabaseManager.getConnection()) {
-            var statement = "SELECT * FROM user WHERE username=?";
+            var statement = "SELECT * FROM " + userTable + " WHERE username=?";
             try (var preparedStatement = connection.prepareStatement(statement)) {
                 preparedStatement.setString(1, username);
                 try (var resultSet = preparedStatement.executeQuery()) {
@@ -44,7 +57,7 @@ public class MySQLUserDAO implements UserDAO {
 
     @Override
     public void clear() throws DataAccessException {
-        var statement = "TRUNCATE user";
+        var statement = "TRUNCATE " + userTable;
         executeUpdate(statement);
     }
 
@@ -70,9 +83,10 @@ public class MySQLUserDAO implements UserDAO {
         }
     }
 
-    private final String[] createStatements = {
+    private String[] getCreateStatements(String userTable) {
+        return new String[]{
         """
-        CREATE TABLE IF NOT EXISTS user (
+        CREATE TABLE IF NOT EXISTS %s (
             `username` varchar(45) NOT NULL,
             `password` varchar(100) NOT NULL,
             `email` varchar(100) NOT NULL,
@@ -80,8 +94,9 @@ public class MySQLUserDAO implements UserDAO {
             UNIQUE KEY `username_UNIQUE` (`username`),
             UNIQUE KEY `email_UNIQUE` (`email`)
           ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-        """
-    };
+        """.formatted(userTable)
+        };
+    }
 
     private void configureDatabase() throws DataAccessException {
         DatabaseManager.createDatabase();
