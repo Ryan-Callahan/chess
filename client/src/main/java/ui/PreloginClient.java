@@ -9,11 +9,10 @@ import java.util.Arrays;
 
 import static ui.ClientType.*;
 
-public class PreloginClient implements Client {
-    private final ServerFacade server;
-    private ClientType currentClient = LOGGED_OUT;
+public class PreloginClient extends Client {
     public PreloginClient(String serverUrl) {
-        server = new ServerFacade(serverUrl);
+        this.server = new ServerFacade(serverUrl);
+        currentClient = LOGGED_OUT;
     }
 
     @Override
@@ -65,13 +64,5 @@ public class PreloginClient implements Client {
             return response(String.format("You registered and signed in as %s.", username));
         }
         throw new ResponseException(400, "Expected: <username> <password> <email>");
-    }
-
-    private String response(String resp) {
-        return currentClient + "|||" + resp;
-    }
-
-    private void advanceClient() {
-        currentClient = LOGGED_IN;
     }
 }
