@@ -1,6 +1,11 @@
 package ui;
 
+import exception.ResponseException;
+import model.request.LoginRequest;
+import model.request.RegisterRequest;
 import server.ServerFacade;
+
+import java.util.Arrays;
 
 public class PreloginClient implements Client {
     private final ServerFacade server;
@@ -11,16 +16,41 @@ public class PreloginClient implements Client {
     @Override
     public String eval(String input) {
         try {
-            String command = input;
+            String[] inputArray = input.toLowerCase().split(" ");
+            String command = inputArray[0];
+            String[] params = Arrays.copyOfRange(inputArray, 1, inputArray.length);
             return switch (command) {
-                case "login" -> null;
-                case "register" -> null;
+                case "login" -> login(params);
+                case "register" -> register(params);
                 case "quit" -> "quit";
                 default -> help();
             };
         } catch (Exception e) {
             return e.getMessage();
         }
+    }
+
+    private String login(String... params) throws ResponseException {
+        if (params.length == 2) {
+            var username = params[0];
+            var password = params[1];
+            LoginRequest loginRequest = new LoginRequest(username, password);
+            server.login(loginRequest);
+            return String.format("You signed in as %s.", username);
+        }
+        throw new ResponseException(400, "Expected: <username> <password>");
+    }
+
+    private String register(String... params) throws ResponseException {
+        if (params.length == 3) {
+            var username = params[0];
+            var password = params[1];
+            var email = params[2];
+            RegisterRequest registerRequest = new RegisterRequest(username, password, email);
+            server.register(registerRequest);
+            return String.format("You registered and signed in as %s.", username);
+        }
+        throw new ResponseException(400, "Expected: <username> <password> <email>");
     }
 
     @Override
