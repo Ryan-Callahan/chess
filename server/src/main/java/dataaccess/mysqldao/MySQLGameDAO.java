@@ -4,7 +4,7 @@ import chess.ChessGame;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import model.GameData;
-import server.serializer.GSerializer;
+import serializer.GSerializer;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

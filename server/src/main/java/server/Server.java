@@ -7,8 +7,8 @@ import spark.Request;
 import spark.Response;
 import spark.Spark;
 
-import static server.serializer.GSerializer.deserialize;
-import static server.serializer.GSerializer.serialize;
+import static serializer.GSerializer.deserialize;
+import static serializer.GSerializer.serialize;
 
 public class Server {
     private final UserService userService = new UserService();
