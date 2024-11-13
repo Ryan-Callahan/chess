@@ -7,10 +7,23 @@ import server.ServerFacade;
 
 import java.util.Arrays;
 
+import static ui.ClientType.*;
+
 public class PreloginClient implements Client {
     private final ServerFacade server;
+    private ClientType currentClient = LOGGED_OUT;
     public PreloginClient(String serverUrl) {
         server = new ServerFacade(serverUrl);
+    }
+
+    @Override
+    public String help() {
+        return """
+                - login <USERNAME> <PASSWORD>
+                - register <USERNAME> <PASSWORD> <EMAIL>
+                - quit
+                - help
+                """;
     }
 
     @Override
@@ -22,8 +35,8 @@ public class PreloginClient implements Client {
             return switch (command) {
                 case "login" -> login(params);
                 case "register" -> register(params);
-                case "quit" -> "quit";
-                default -> help();
+                case "quit" -> response("quit");
+                default -> response(help());
             };
         } catch (Exception e) {
             return e.getMessage();
@@ -36,7 +49,8 @@ public class PreloginClient implements Client {
             var password = params[1];
             LoginRequest loginRequest = new LoginRequest(username, password);
             server.login(loginRequest);
-            return String.format("You signed in as %s.", username);
+            advanceClient();
+            return response(String.format("You signed in as %s.", username));
         }
         throw new ResponseException(400, "Expected: <username> <password>");
     }
@@ -48,18 +62,16 @@ public class PreloginClient implements Client {
             var email = params[2];
             RegisterRequest registerRequest = new RegisterRequest(username, password, email);
             server.register(registerRequest);
-            return String.format("You registered and signed in as %s.", username);
+            return response(String.format("You registered and signed in as %s.", username));
         }
         throw new ResponseException(400, "Expected: <username> <password> <email>");
     }
 
-    @Override
-    public String help() {
-        return """
-                - login <USERNAME> <PASSWORD>
-                - register <USERNAME> <PASSWORD> <EMAIL>
-                - quit
-                - help
-                """;
+    private String response(String resp) {
+        return currentClient + "|||" + resp;
+    }
+
+    private void advanceClient() {
+        currentClient = LOGGED_IN;
     }
 }
