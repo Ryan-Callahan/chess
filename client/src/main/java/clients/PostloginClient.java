@@ -83,7 +83,7 @@ public class PostloginClient extends Client {
 
     private String playGame(String... params) throws ResponseException {
         if (params.length == 2) {
-            var gameID = gamesKeysToIDs.get(Integer.parseInt(params[0]));
+            var gameID = getGameID(Integer.parseInt(params[0]));
             var teamColor = params[1];
             server.joinGame(teamColor, gameID);
             return response("Joined game");
@@ -93,8 +93,8 @@ public class PostloginClient extends Client {
 
     private String observeGame(String... params) throws ResponseException {
         if (params.length == 1) {
-            var gameID = params[0];
-            var game = server.observeGame(Integer.parseInt(gameID));
+            var gameID = getGameID(Integer.parseInt(params[0]));
+            var game = server.observeGame(gameID);
             return response(GSerializer.serialize(game));
         }
         throw new ResponseException(400, "Expected: <gameid>");
@@ -110,5 +110,13 @@ public class PostloginClient extends Client {
             this.gamesKeysToIDs.put(ctr, game.gameID());
             ctr++;
         }
+    }
+
+    private int getGameID(int gameKey) throws ResponseException {
+        var gameID = gamesKeysToIDs.get(gameKey);
+        if (gameID != null) {
+            return gameID;
+        }
+        throw new ResponseException(400, "Game ID does not exist!");
     }
 }
