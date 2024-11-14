@@ -1,8 +1,13 @@
 package ui;
 
-public class GameplayClient implements Client {
-    public GameplayClient(String serverUrl) {
+import server.ServerFacade;
 
+import static ui.ClientType.IN_GAME;
+
+public class GameplayClient extends Client {
+    public GameplayClient(ServerFacade server) {
+        super(server);
+        currentClient = IN_GAME;
     }
 
     @Override

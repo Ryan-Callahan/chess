@@ -10,8 +10,8 @@ import java.util.Arrays;
 import static ui.ClientType.*;
 
 public class PreloginClient extends Client {
-    public PreloginClient(String serverUrl) {
-        this.server = new ServerFacade(serverUrl);
+    public PreloginClient(ServerFacade server) {
+        super(server);
         currentClient = LOGGED_OUT;
     }
 

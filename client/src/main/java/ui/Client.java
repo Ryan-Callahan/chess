@@ -7,6 +7,10 @@ import static ui.ClientType.*;
 public abstract class Client {
     protected ServerFacade server;
     protected ClientType currentClient;
+
+    public Client(ServerFacade server) {
+        this.server = server;
+    }
     public abstract String help();
 
     public abstract String eval(String input);
@@ -29,3 +33,4 @@ public abstract class Client {
         };
     }
 }
+
