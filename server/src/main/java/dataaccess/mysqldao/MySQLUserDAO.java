@@ -16,7 +16,7 @@ public class MySQLUserDAO implements UserDAO {
 
     public MySQLUserDAO() {
         if (TESTS) {
-            userTable = "testuser";
+            userTable = "test_chess.user";
         } else {
             userTable = "user";
         }

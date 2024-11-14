@@ -16,7 +16,7 @@ public class MySQLAuthDAO implements AuthDAO {
 
     public MySQLAuthDAO() {
         if (TESTS) {
-            authTable = "testauth";
+            authTable = "test_chess.auth";
         } else {
             authTable = "auth";
         }

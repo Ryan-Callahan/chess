@@ -21,7 +21,7 @@ public class MySQLGameDAO implements GameDAO {
 
     public MySQLGameDAO() {
         if (TESTS) {
-            gameTable = "testgame";
+            gameTable = "test_chess.game";
         } else {
             gameTable = "game";
         }
