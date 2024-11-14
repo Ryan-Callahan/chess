@@ -67,7 +67,7 @@ public class GameService extends AuthService implements Service {
     }
 
     private Boolean isColorTaken(GameData game, String playerColor) {
-        if (Objects.equals(playerColor, "WHITE")) {
+        if (Objects.equals(playerColor.toLowerCase(), "white")) {
             return game.whiteUsername() != null;
         } else {
             return game.blackUsername() != null;
@@ -76,7 +76,7 @@ public class GameService extends AuthService implements Service {
 
     private GameData updatePlayerColor(GameData game, String playerColor, String username) {
         GameData gameUpdate;
-        if (Objects.equals(playerColor, "WHITE")) {
+        if (Objects.equals(playerColor.toLowerCase(), "white")) {
             gameUpdate = new GameData(game.gameID(), username, game.blackUsername(), game.gameName(), game.game());
         } else {
             gameUpdate = new GameData(game.gameID(), game.whiteUsername(), username, game.gameName(), game.game());
