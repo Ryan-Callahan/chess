@@ -1,5 +1,6 @@
 package clients;
 
+import exception.ResponseException;
 import server.ServerFacade;
 
 import java.util.Scanner;
@@ -26,14 +27,13 @@ public class Repl {
         var result = "";
         var nextClientType = currentClientType;
         while (!result.equals("quit")) {
-            checkClient(nextClientType);
-            printPrompt();
-            String line = scanner.nextLine();
-
             try {
+                checkClient(nextClientType);
+                printPrompt();
+                String line = scanner.nextLine();
                 var results = client.eval(line).split("\\|\\|\\|");
-                nextClientType = ClientType.valueOf(results[0]);
-                result = results[1];
+                nextClientType = getNextClientType(results);
+                result = results[results.length-1];
                 System.out.print(SET_TEXT_COLOR_BLUE + result);
             } catch (Throwable e) {
                 System.out.print(e);
@@ -55,7 +55,7 @@ public class Repl {
         System.out.printf("\n%s[%s]>>> %s", RESET_TEXT_COLOR, currentClientType, SET_TEXT_COLOR_GREEN);
     }
 
-    private void checkClient(ClientType newType) {
+    private void checkClient(ClientType newType) throws ResponseException {
         if (newType != currentClientType) {
             client = switch (newType) {
                 case LOGGED_OUT -> new PreloginClient(server);
@@ -63,6 +63,14 @@ public class Repl {
                 case IN_GAME -> new GameplayClient(server);
             };
             currentClientType = newType;
+        }
+    }
+
+    private ClientType getNextClientType(String[] results) {
+        try {
+            return ClientType.valueOf(results[0]);
+        } catch (Exception ignored) {
+            return this.currentClientType;
         }
     }
 }

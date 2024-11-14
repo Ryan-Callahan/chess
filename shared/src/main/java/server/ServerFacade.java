@@ -112,7 +112,7 @@ public class ServerFacade {
         var status = http.getResponseCode();
         var response = http.getResponseMessage();
         if (status != 200){
-            throw new ResponseException(status, "failure: " + status + response);
+            throw new ResponseException(status, "Failure: " + response);
         }
     }
 

@@ -1,17 +1,24 @@
 package clients;
 
 import exception.ResponseException;
+import model.GameData;
 import serializer.GSerializer;
 import server.ServerFacade;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Objects;
 
 import static clients.ClientType.LOGGED_IN;
 
 public class PostloginClient extends Client {
-    public PostloginClient(ServerFacade server) {
+    HashMap<Integer, GameData> games = new HashMap<>();
+    HashMap<Integer, Integer> gamesKeysToIDs = new HashMap<>();
+
+    public PostloginClient(ServerFacade server) throws ResponseException {
         super(server);
         currentClient = LOGGED_IN;
+        populateGamesList();
     }
     @Override
     public String help() {
@@ -60,15 +67,25 @@ public class PostloginClient extends Client {
     }
 
     private String listGames() throws ResponseException {
-        var games = server.listGames();
-        return response(GSerializer.serialize(games));
+        populateGamesList();
+        StringBuilder gamesList = new StringBuilder();
+        for (var key : games.keySet()) {
+            var game = games.get(key);
+            gamesList.append(String.format("%s %s", key, game.gameName()));
+            gamesList.append("\n  Players:");
+            gamesList.append("\n   White: ").append(Objects.toString(game.whiteUsername(), ""));
+            gamesList.append("\n   Black: ").append(Objects.toString(game.blackUsername(), ""));
+            gamesList.append("\n---------\n");
+        }
+        gamesList.delete(gamesList.length()-11, gamesList.length());
+        return response(gamesList.toString());
     }
 
     private String playGame(String... params) throws ResponseException {
         if (params.length == 2) {
-            var gameID = params[0];
+            var gameID = gamesKeysToIDs.get(Integer.parseInt(params[0]));
             var teamColor = params[1];
-            server.joinGame(teamColor, Integer.parseInt(gameID));
+            server.joinGame(teamColor, gameID);
             return response("Joined game");
         }
         throw new ResponseException(400, "Expected: <gameid> <teamcolor>");
@@ -81,5 +98,17 @@ public class PostloginClient extends Client {
             return response(GSerializer.serialize(game));
         }
         throw new ResponseException(400, "Expected: <gameid>");
+    }
+
+    private void populateGamesList() throws ResponseException {
+        this.games = new HashMap<>();
+        this.gamesKeysToIDs = new HashMap<>();
+        var games = server.listGames();
+        int ctr = 1;
+        for (var game : games) {
+            this.games.put(ctr, game);
+            this.gamesKeysToIDs.put(ctr, game.gameID());
+            ctr++;
+        }
     }
 }
