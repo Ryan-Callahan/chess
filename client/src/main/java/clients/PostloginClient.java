@@ -1,4 +1,4 @@
-package ui;
+package clients;
 
 import exception.ResponseException;
 import serializer.GSerializer;
@@ -6,7 +6,7 @@ import server.ServerFacade;
 
 import java.util.Arrays;
 
-import static ui.ClientType.LOGGED_IN;
+import static clients.ClientType.LOGGED_IN;
 
 public class PostloginClient extends Client {
     public PostloginClient(ServerFacade server) {

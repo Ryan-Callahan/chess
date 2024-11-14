@@ -1,8 +1,9 @@
-package ui;
+package clients;
 
+import clients.ClientType;
 import server.ServerFacade;
 
-import static ui.ClientType.*;
+import static clients.ClientType.*;
 
 public abstract class Client {
     protected ServerFacade server;

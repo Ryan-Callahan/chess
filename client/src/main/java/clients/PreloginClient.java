@@ -1,11 +1,11 @@
-package ui;
+package clients;
 
 import exception.ResponseException;
 import server.ServerFacade;
 
 import java.util.Arrays;
 
-import static ui.ClientType.LOGGED_OUT;
+import static clients.ClientType.LOGGED_OUT;
 
 public class PreloginClient extends Client {
     public PreloginClient(ServerFacade server) {

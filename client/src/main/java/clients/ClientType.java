@@ -1,4 +1,4 @@
-package ui;
+package clients;
 
 public enum ClientType {
     LOGGED_OUT,

@@ -1,10 +1,10 @@
-package ui;
+package clients;
 
 import server.ServerFacade;
 
 import java.util.Scanner;
 
-import static ui.ClientType.*;
+import static clients.ClientType.LOGGED_OUT;
 import static ui.EscapeSequences.*;
 
 public class Repl {

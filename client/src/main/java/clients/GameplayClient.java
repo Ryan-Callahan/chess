@@ -1,8 +1,8 @@
-package ui;
+package clients;
 
 import server.ServerFacade;
 
-import static ui.ClientType.IN_GAME;
+import static clients.ClientType.IN_GAME;
 
 public class GameplayClient extends Client {
     public GameplayClient(ServerFacade server) {
