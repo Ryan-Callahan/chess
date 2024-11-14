@@ -1,13 +1,11 @@
 package ui;
 
 import exception.ResponseException;
-import model.request.LoginRequest;
-import model.request.RegisterRequest;
 import server.ServerFacade;
 
 import java.util.Arrays;
 
-import static ui.ClientType.*;
+import static ui.ClientType.LOGGED_OUT;
 
 public class PreloginClient extends Client {
     public PreloginClient(ServerFacade server) {
@@ -46,8 +44,7 @@ public class PreloginClient extends Client {
         if (params.length == 2) {
             var username = params[0];
             var password = params[1];
-            LoginRequest loginRequest = new LoginRequest(username, password);
-            server.login(loginRequest);
+            server.login(username, password);
             advanceClient();
             return response(String.format("You signed in as %s.", username));
         }
@@ -59,8 +56,7 @@ public class PreloginClient extends Client {
             var username = params[0];
             var password = params[1];
             var email = params[2];
-            RegisterRequest registerRequest = new RegisterRequest(username, password, email);
-            server.register(registerRequest);
+            server.register(username, password, email);
             return response(String.format("You registered and signed in as %s.", username));
         }
         throw new ResponseException(400, "Expected: <username> <password> <email>");

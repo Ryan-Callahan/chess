@@ -2,7 +2,10 @@ package server;
 
 import exception.ResponseException;
 import model.GameData;
-import model.request.*;
+import model.request.CreateGameRequest;
+import model.request.JoinGameRequest;
+import model.request.LoginRequest;
+import model.request.RegisterRequest;
 import model.result.ListGamesResult;
 import model.result.LoginResult;
 import serializer.GSerializer;
@@ -14,6 +17,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+import java.util.Collection;
 
 public class ServerFacade {
     private final String serverUrl;
@@ -22,13 +26,15 @@ public class ServerFacade {
         this.serverUrl = serverUrl;
     }
 
-    public void register(RegisterRequest registerRequest) throws ResponseException {
+    public void register(String username, String password, String email) throws ResponseException {
         var path = "/user";
+        var registerRequest = new RegisterRequest(username, password, email);
         authToken = makeRequest("POST", path, registerRequest, LoginResult.class).authToken();
     }
 
-    public void login(LoginRequest loginRequest) throws ResponseException {
+    public void login(String username, String password) throws ResponseException {
         var path = "/session";
+        var loginRequest = new LoginRequest(username, password);
         authToken = makeRequest("POST", path, loginRequest, LoginResult.class).authToken();
     }
 
@@ -38,24 +44,35 @@ public class ServerFacade {
         expireAuthToken();
     }
 
-    public void createGame(CreateGameRequest createGameRequest) throws ResponseException {
+    public void createGame(String gameName) throws ResponseException {
         var path = "/game";
+        var createGameRequest = new CreateGameRequest(gameName);
         makeRequest("POST", path, createGameRequest, null);
     }
 
-    public ListGamesResult listGames() throws ResponseException {
+    public Collection<GameData> listGames() throws ResponseException {
         var path = "/game";
-        return makeRequest("GET", path, null, ListGamesResult.class);
+        return makeRequest("GET", path, null, ListGamesResult.class).games();
     }
 
-    public void joinGame(JoinGameRequest joinGameRequest) throws ResponseException {
+    public void joinGame(String playerColor, int gameID) throws ResponseException {
         var path = "/game";
+        var joinGameRequest = new JoinGameRequest(playerColor, gameID);
         makeRequest("PUT", path, joinGameRequest, null);
     }
 
     public GameData observeGame(int gameID) throws ResponseException {
-        var games = listGames().games();
-        return games.stream().filter(gameData -> gameData.gameID() == gameID).findFirst().get();
+        var games = listGames();
+        try {
+            return games.stream().filter(gameData -> gameData.gameID() == gameID).findFirst().get();
+        } catch (Exception e) {
+            throw new ResponseException(400, e.getMessage());
+        }
+    }
+
+    public void clear() throws ResponseException {
+        var path = "/db";
+        makeRequest("DELETE", path, null, null);
     }
 
     private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {

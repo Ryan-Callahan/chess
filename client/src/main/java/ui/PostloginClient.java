@@ -1,8 +1,6 @@
 package ui;
 
 import exception.ResponseException;
-import model.request.CreateGameRequest;
-import model.request.JoinGameRequest;
 import serializer.GSerializer;
 import server.ServerFacade;
 
@@ -55,15 +53,14 @@ public class PostloginClient extends Client {
     private String createGame(String... params) throws ResponseException {
         if (params.length == 1) {
             var gameName = params[0];
-            CreateGameRequest createGameRequest = new CreateGameRequest(gameName);
-            server.createGame(createGameRequest);
+            server.createGame(gameName);
             return response("Created game " + gameName);
         }
         throw new ResponseException(400, "Expected: <gamename>");
     }
 
     private String listGames() throws ResponseException {
-        var games = server.listGames().games();
+        var games = server.listGames();
         return response(GSerializer.serialize(games));
     }
 
@@ -71,8 +68,7 @@ public class PostloginClient extends Client {
         if (params.length == 2) {
             var gameID = params[0];
             var teamColor = params[1];
-            JoinGameRequest joinGameRequest = new JoinGameRequest(teamColor, Integer.parseInt(gameID));
-            server.joinGame(joinGameRequest);
+            server.joinGame(teamColor, Integer.parseInt(gameID));
             return response("Joined game");
         }
         throw new ResponseException(400, "Expected: <gameid> <teamcolor>");
