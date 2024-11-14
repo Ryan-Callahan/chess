@@ -1,5 +1,7 @@
 package ui;
 
+import server.ServerFacade;
+
 import java.util.Scanner;
 
 import static ui.ClientType.*;
@@ -8,13 +10,14 @@ import static ui.EscapeSequences.*;
 public class Repl {
     private Client client;
     private ClientType currentClientType;
-    private String serverUrl;
+    private final ServerFacade server;
 
 
     public Repl(String serverUrl) {
-        client = new PreloginClient(serverUrl);
         currentClientType = LOGGED_OUT;
-        this.serverUrl = serverUrl;
+        server = new ServerFacade(serverUrl);
+        client = new PreloginClient(server);
+
     }
 
     public void run() {
@@ -33,7 +36,7 @@ public class Repl {
                 result = results[1];
                 System.out.print(SET_TEXT_COLOR_BLUE + result);
             } catch (Throwable e) {
-                System.out.print(e.toString());
+                System.out.print(e);
             }
         }
         System.out.println();
@@ -55,9 +58,9 @@ public class Repl {
     private void checkClient(ClientType newType) {
         if (newType != currentClientType) {
             client = switch (newType) {
-                case LOGGED_OUT -> new PreloginClient(serverUrl);
-                case LOGGED_IN -> new PostloginClient(serverUrl);
-                case IN_GAME -> new GameplayClient(serverUrl);
+                case LOGGED_OUT -> new PreloginClient(server);
+                case LOGGED_IN -> new PostloginClient(server);
+                case IN_GAME -> new GameplayClient(server);
             };
             currentClientType = newType;
         }
