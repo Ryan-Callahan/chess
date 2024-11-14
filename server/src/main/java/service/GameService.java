@@ -66,37 +66,38 @@ public class GameService extends AuthService implements Service {
         return tryJoiningGame(game, joinColor, username);
     }
 
-    private Boolean isColorTaken(GameData game, String playerColor) {
+    private Boolean isColorTaken(GameData game, String playerColor) throws DataAccessException {
         if (Objects.equals(playerColor.toLowerCase(), "white")) {
             return game.whiteUsername() != null;
-        } else {
+        } else if (Objects.equals(playerColor.toLowerCase(), "black")) {
             return game.blackUsername() != null;
         }
+        throw new DataAccessException("Error: bad request");
     }
 
-    private GameData updatePlayerColor(GameData game, String playerColor, String username) {
-        GameData gameUpdate;
+    private GameData updatePlayerColor(GameData game, String playerColor, String username) throws DataAccessException {
         if (Objects.equals(playerColor.toLowerCase(), "white")) {
-            gameUpdate = new GameData(game.gameID(), username, game.blackUsername(), game.gameName(), game.game());
-        } else {
-            gameUpdate = new GameData(game.gameID(), game.whiteUsername(), username, game.gameName(), game.game());
+            return new GameData(game.gameID(), username, game.blackUsername(), game.gameName(), game.game());
+        } else if (Objects.equals(playerColor.toLowerCase(), "black")) {
+            return new GameData(game.gameID(), game.whiteUsername(), username, game.gameName(), game.game());
         }
-        return gameUpdate;
+        throw new DataAccessException("Error: bad request");
     }
 
     private Result tryJoiningGame(GameData game, String joinColor, String username) {
-        if (joinColor == null) {
-            return new Result(400, new ErrorResult("Error: bad request"));
-        } else if (isColorTaken(game, joinColor)) {
-            return new Result(403, new ErrorResult("Error: already taken"));
-        } else {
-            try {
+        try {
+            if (joinColor == null) {
+                return new Result(400, new ErrorResult("Error: bad request"));
+            } else if (isColorTaken(game, joinColor)) {
+                return new Result(403, new ErrorResult("Error: already taken"));
+            } else {
                 GameData gameUpdate = updatePlayerColor(game, joinColor, username);
                 GAME_DAO.updateGame(gameUpdate);
                 return new Result(200, new EmptyResult());
-            } catch (DataAccessException e) {
-                return new Result(400, new ErrorResult(e.getMessage()));
             }
+        } catch (DataAccessException e) {
+            return new Result(400, new ErrorResult(e.getMessage()));
         }
+
     }
 }
