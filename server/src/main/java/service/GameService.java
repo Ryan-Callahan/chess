@@ -85,10 +85,10 @@ public class GameService extends AuthService implements Service {
     }
 
     private Result tryJoiningGame(GameData game, String joinColor, String username) {
-        if (isColorTaken(game, joinColor)) {
-            return new Result(403, new ErrorResult("Error: already taken"));
-        } else if (joinColor == null) {
+        if (joinColor == null) {
             return new Result(400, new ErrorResult("Error: bad request"));
+        } else if (isColorTaken(game, joinColor)) {
+            return new Result(403, new ErrorResult("Error: already taken"));
         } else {
             try {
                 GameData gameUpdate = updatePlayerColor(game, joinColor, username);
