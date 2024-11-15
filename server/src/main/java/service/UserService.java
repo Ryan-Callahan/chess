@@ -10,8 +10,6 @@ import model.result.ErrorResult;
 import model.result.Result;
 import org.mindrot.jbcrypt.BCrypt;
 
-import java.util.Objects;
-
 public class UserService extends AuthService implements Service {
 
     public Result register(RegisterRequest registerRequest) {

@@ -22,6 +22,7 @@ import java.util.Collection;
 public class ServerFacade {
     private final String serverUrl;
     private String authToken = null;
+
     public ServerFacade(String serverUrl) {
         this.serverUrl = serverUrl;
     }
@@ -111,7 +112,7 @@ public class ServerFacade {
     private void throwIfNotSuccessful(HttpURLConnection http) throws IOException, ResponseException {
         var status = http.getResponseCode();
         var response = http.getResponseMessage();
-        if (status != 200){
+        if (status != 200) {
             throw new ResponseException(status, "Failure: " + response);
         }
     }

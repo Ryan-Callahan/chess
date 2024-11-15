@@ -17,6 +17,7 @@ public class GSerializer {
     public static <T> T deserialize(String json, Class<T> objectType) {
         return GSON_SERIALIZER.fromJson(json, objectType);
     }
+
     public static <T> T deserialize(InputStreamReader reader, Class<T> objectType) {
         return GSON_SERIALIZER.fromJson(reader, objectType);
     }

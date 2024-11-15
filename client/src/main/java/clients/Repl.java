@@ -33,7 +33,7 @@ public class Repl {
                 String line = scanner.nextLine();
                 var results = client.eval(line).split("\\|\\|\\|");
                 nextClientType = getNextClientType(results);
-                result = results[results.length-1];
+                result = results[results.length - 1];
                 System.out.print(SET_TEXT_COLOR_BLUE + result);
             } catch (Throwable e) {
                 System.out.print(e);

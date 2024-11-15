@@ -26,10 +26,9 @@ public interface MySQLDAO {
             try (var preparedStatement = connection.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
                 for (int i = 0; i < params.length; i++) {
                     var param = params[i];
-                    if (param instanceof  String p) {
+                    if (param instanceof String p) {
                         preparedStatement.setString(i + 1, p);
-                    }
-                    else if (param == null) {
+                    } else if (param == null) {
                         preparedStatement.setNull(i + 1, NULL);
                     }
                 }

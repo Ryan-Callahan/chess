@@ -2,7 +2,10 @@ package dataaccess;
 
 import dataaccess.mysqldao.MySQLAuthDAO;
 import model.AuthData;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 public class MySQLAuthDAOTest {
     MySQLAuthDAO testAuthDao = new MySQLAuthDAO();

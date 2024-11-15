@@ -1,6 +1,5 @@
 package clients;
 
-import clients.ClientType;
 import server.ServerFacade;
 
 import static clients.ClientType.*;
@@ -12,6 +11,7 @@ public abstract class Client {
     public Client(ServerFacade server) {
         this.server = server;
     }
+
     public abstract String help();
 
     public abstract String eval(String input);

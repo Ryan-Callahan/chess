@@ -6,7 +6,10 @@ import chess.ChessPiece;
 import chess.ChessPosition;
 import model.GameData;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.Vector;
 
 import static ui.EscapeSequences.*;
 
@@ -70,7 +73,7 @@ public class GameBoardUI {
     private String drawColCoordinates(Boolean reversed) {
         StringBuilder coords = new StringBuilder();
         List<String> columns = new Vector<>();
-        Collections.addAll(columns, " " , "ａ", "ｂ", "ｃ" , "ｄ" , "ｅ" , "ｆ" , "ｇ" , "ｈ" , " ");
+        Collections.addAll(columns, " ", "ａ", "ｂ", "ｃ", "ｄ", "ｅ", "ｆ", "ｇ", "ｈ", " ");
         if (reversed) {
             Collections.reverse(columns);
         }

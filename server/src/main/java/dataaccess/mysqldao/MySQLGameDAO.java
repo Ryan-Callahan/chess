@@ -113,16 +113,13 @@ public class MySQLGameDAO implements GameDAO {
             try (var preparedStatement = connection.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
                 for (int i = 0; i < params.length; i++) {
                     var param = params[i];
-                    if (param instanceof  Integer p) {
+                    if (param instanceof Integer p) {
                         preparedStatement.setInt(i + 1, p);
-                    }
-                    if (param instanceof  String p) {
+                    } else if (param instanceof String p) {
                         preparedStatement.setString(i + 1, p);
-                    }
-                    if (param instanceof  ChessGame p) {
+                    } else if (param instanceof ChessGame p) {
                         preparedStatement.setString(i + 1, GSerializer.serialize(p));
-                    }
-                    else if (param == null) {
+                    } else if (param == null) {
                         preparedStatement.setNull(i + 1, NULL);
                     }
                 }

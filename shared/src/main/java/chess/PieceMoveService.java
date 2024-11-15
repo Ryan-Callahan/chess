@@ -13,15 +13,14 @@ public class PieceMoveService {
             ChessPiece.PieceType.BISHOP,
             ChessPiece.PieceType.ROOK
     };
-    public PieceMoveService() {}
 
     /**
      * A method for calculating the moves a standard piece can make.
      *
-     * @param board the chess board the piece is on
+     * @param board         the chess board the piece is on
      * @param startPosition the position of the piece
-     * @param directions the directions the piece can move
-     * @param continuous true if the piece can move more than once, false otherwise
+     * @param directions    the directions the piece can move
+     * @param continuous    true if the piece can move more than once, false otherwise
      * @return a collection of all possible ChessMove objects
      */
     public static Collection<ChessMove> calculateMoves(ChessBoard board, ChessPosition startPosition, Direction[] directions, Boolean continuous) {
@@ -45,12 +44,12 @@ public class PieceMoveService {
      * A helper method for calculateMoves that calculates the next move a piece can make.
      * Adds valid moves to chessMoves.
      *
-     * @param board the ChessBoard
-     * @param currentPiece the current ChessPiece
+     * @param board         the ChessBoard
+     * @param currentPiece  the current ChessPiece
      * @param startPosition the current position of the currentPiece
-     * @param nextPosition the position to calculate
-     * @param chessMoves the set of ChessMove
-     * @param continuing whether the piece can move continuously or not
+     * @param nextPosition  the position to calculate
+     * @param chessMoves    the set of ChessMove
+     * @param continuing    whether the piece can move continuously or not
      * @return A boolean representing if the piece should keep continuing or not.
      */
     private static Boolean calcluateNextStep(ChessBoard board, ChessPiece currentPiece, ChessPosition startPosition, ChessPosition nextPosition,
@@ -74,9 +73,9 @@ public class PieceMoveService {
     /**
      * An alternate signature for calculateMoves with the parameter "continuous" set to false
      *
-     * @param board the chess board the piece is on
+     * @param board         the chess board the piece is on
      * @param startPosition the position of the piece
-     * @param directions the directions the piece can move
+     * @param directions    the directions the piece can move
      * @return a collection of all possible ChessMove objects
      */
     public static Collection<ChessMove> calculateMoves(ChessBoard board, ChessPosition startPosition, Direction[] directions) {
@@ -86,9 +85,9 @@ public class PieceMoveService {
     /**
      * A method for calculating all possible moves a pawn can make.
      *
-     * @param board the chess board the pawn is on
+     * @param board         the chess board the pawn is on
      * @param startPosition the position of the pawn
-     * @param directions the directions the pawn can move
+     * @param directions    the directions the pawn can move
      * @return a collection of all possible ChessMove objects
      */
     public static Collection<ChessMove> calculatePawnMoves(ChessBoard board, ChessPosition startPosition, Direction[] directions) {
@@ -96,7 +95,7 @@ public class PieceMoveService {
         ChessPiece currentPiece = board.getPiece(startPosition);
         int polarity = (currentPiece.getTeamColor() == ChessGame.TeamColor.WHITE) ? 1 : -1;
         for (Direction direction : directions) {
-            ChessPosition nextPosition = new ChessPosition(startPosition.getRow() + direction.yVector()*polarity,
+            ChessPosition nextPosition = new ChessPosition(startPosition.getRow() + direction.yVector() * polarity,
                     startPosition.getColumn() + direction.xVector());
             if (isOnBoard(nextPosition)) {
                 if (direction.xVector() != 0) {
@@ -113,19 +112,19 @@ public class PieceMoveService {
      * A helper method for calculatePawnMoves that calculates the forward move for a pawn.
      * Adds valid moves to chessMoves.
      *
-     * @param board the Chess Board
+     * @param board         the Chess Board
      * @param startPosition the starting position of the piece
-     * @param nextPosition the position to calculate
-     * @param direction the direction the pawn is moving
-     * @param currentPiece the current piece
-     * @param chessMoves the list of ChessMoves
+     * @param nextPosition  the position to calculate
+     * @param direction     the direction the pawn is moving
+     * @param currentPiece  the current piece
+     * @param chessMoves    the list of ChessMoves
      */
     private static void calculatePawnForwardMove(ChessBoard board, ChessPosition startPosition, ChessPosition nextPosition, Direction direction,
                                                  ChessPiece currentPiece, HashSet<ChessMove> chessMoves) {
         int polarity = (currentPiece.getTeamColor() == ChessGame.TeamColor.WHITE) ? 1 : -1;
         if (board.getPiece(nextPosition) == null) {
             if (!pawnHasMoved(startPosition, currentPiece.getTeamColor())) {
-                ChessPosition doubleMove = new ChessPosition(nextPosition.getRow() + direction.yVector()*polarity,
+                ChessPosition doubleMove = new ChessPosition(nextPosition.getRow() + direction.yVector() * polarity,
                         startPosition.getColumn());
                 if (board.getPiece(doubleMove) == null) {
                     chessMoves.add(new ChessMove(startPosition, doubleMove, null));
@@ -139,11 +138,11 @@ public class PieceMoveService {
      * A helper method for calculatePawnMoves that calculates the diagonal moves for a pawn.
      * Adds valid moves to chessMoves.
      *
-     * @param board the Chess Board
+     * @param board         the Chess Board
      * @param startPosition the starting position of the piece
-     * @param nextPosition the position to calculate
-     * @param currentPiece the current piece
-     * @param chessMoves the list of ChessMoves
+     * @param nextPosition  the position to calculate
+     * @param currentPiece  the current piece
+     * @param chessMoves    the list of ChessMoves
      */
     private static void calculatePawnDiagonalMove(ChessBoard board, ChessPosition startPosition, ChessPosition nextPosition, ChessPiece currentPiece,
                                                   HashSet<ChessMove> chessMoves) {
@@ -157,8 +156,8 @@ public class PieceMoveService {
      * A private helper method for calculatePawnMoves. Calculates if the pawn should be promoted or not.
      *
      * @param startPosition the starting position of the pawn
-     * @param nextPosition the potential position of the pawn
-     * @param chessMoves the collection of moves the method adds to
+     * @param nextPosition  the potential position of the pawn
+     * @param chessMoves    the collection of moves the method adds to
      */
     private static void addPawnMove(ChessPosition startPosition, ChessPosition nextPosition, Collection<ChessMove> chessMoves) {
         if (nextPosition.getRow() == 8 || nextPosition.getRow() == 1) {
@@ -174,7 +173,7 @@ public class PieceMoveService {
      * Calculates if a pawn has moved or not.
      *
      * @param startPosition the starting position of the pawn
-     * @param color the color of the pawn
+     * @param color         the color of the pawn
      * @return true if the pawn has moved, false if not
      */
     private static Boolean pawnHasMoved(ChessPosition startPosition, ChessGame.TeamColor color) {

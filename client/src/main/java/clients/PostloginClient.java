@@ -20,16 +20,17 @@ public class PostloginClient extends Client {
         currentClient = LOGGED_IN;
         updateGamesList();
     }
+
     @Override
     public String help() {
         return """
-               - logout
-               - createGame <GAMENAME>
-               - listGames
-               - playGame <GAMEID> <TEAMCOLOR>
-               - observeGame <GAMEID>
-               - help
-               """;
+                - logout
+                - createGame <GAMENAME>
+                - listGames
+                - playGame <GAMEID> <TEAMCOLOR>
+                - observeGame <GAMEID>
+                - help
+                """;
     }
 
     @Override
@@ -78,7 +79,7 @@ public class PostloginClient extends Client {
             gamesList.append("\n   Black: ").append(Objects.toString(game.blackUsername(), ""));
             gamesList.append("\n---------\n");
         }
-        gamesList.delete(gamesList.length()-11, gamesList.length());
+        gamesList.delete(gamesList.length() - 11, gamesList.length());
         return response(gamesList.toString());
     }
 

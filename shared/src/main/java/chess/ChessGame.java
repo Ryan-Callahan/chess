@@ -124,7 +124,7 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        Set<ChessPosition> team  = chessBoard.getTeamSet(teamColor);
+        Set<ChessPosition> team = chessBoard.getTeamSet(teamColor);
         for (ChessPosition position : team) {
             Collection<ChessMove> moves = validMoves(position);
             if (moves != null && !moves.isEmpty()) {
@@ -144,7 +144,7 @@ public class ChessGame {
     public boolean isInStalemate(TeamColor teamColor) {
         boolean hasAnyMoves = false;
         if (!isInCheck(teamColor)) {
-            Set<ChessPosition> team  = chessBoard.getTeamSet(teamColor);
+            Set<ChessPosition> team = chessBoard.getTeamSet(teamColor);
             for (ChessPosition position : team) {
                 Collection<ChessMove> moves = validMoves(position);
                 if (moves != null && !moves.isEmpty()) {
@@ -177,7 +177,7 @@ public class ChessGame {
     /**
      * Moves a piece according to the provided move
      *
-     * @param move the move to be made
+     * @param move  the move to be made
      * @param piece the piece to be moved
      */
     private void movePiece(ChessMove move, ChessPiece piece) {
@@ -188,7 +188,7 @@ public class ChessGame {
     /**
      * Calculates if a team would still be in check after a move
      *
-     * @param move the move to be made
+     * @param move      the move to be made
      * @param teamColor the team being checked
      * @return true if the team is still in check after a move
      */

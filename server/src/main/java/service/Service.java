@@ -1,10 +1,7 @@
 package service;
 
-import dataaccess.DataAccessException;
-import dataaccess.memorydao.MemoryAuthDAO;
-import dataaccess.memorydao.MemoryGameDAO;
-import dataaccess.memorydao.MemoryUserDAO;
 import dataaccess.AuthDAO;
+import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
 import dataaccess.mysqldao.MySQLAuthDAO;
