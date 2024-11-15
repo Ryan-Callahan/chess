@@ -2,8 +2,8 @@ package clients;
 
 import exception.ResponseException;
 import model.GameData;
-import serializer.GSerializer;
 import server.ServerFacade;
+import ui.GameBoardUI;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -85,8 +85,9 @@ public class PostloginClient extends Client {
         if (params.length == 2) {
             var gameID = getGameID(Integer.parseInt(params[0]));
             var teamColor = params[1];
+            var game = server.observeGame(gameID);
             server.joinGame(teamColor, gameID);
-            return response("Joined game");
+            return response(new GameBoardUI(game).renderGame());
         }
         throw new ResponseException(400, "Expected: <gameid> <teamcolor>");
     }
@@ -95,7 +96,7 @@ public class PostloginClient extends Client {
         if (params.length == 1) {
             var gameID = getGameID(Integer.parseInt(params[0]));
             var game = server.observeGame(gameID);
-            return response(GSerializer.serialize(game));
+            return response(new GameBoardUI(game).renderGame());
         }
         throw new ResponseException(400, "Expected: <gameid>");
     }
