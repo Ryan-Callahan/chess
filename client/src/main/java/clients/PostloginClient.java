@@ -18,7 +18,7 @@ public class PostloginClient extends Client {
     public PostloginClient(ServerFacade server) throws ResponseException {
         super(server);
         currentClient = LOGGED_IN;
-        populateGamesList();
+        updateGamesList();
     }
     @Override
     public String help() {
@@ -61,13 +61,14 @@ public class PostloginClient extends Client {
         if (params.length == 1) {
             var gameName = params[0];
             server.createGame(gameName);
+            updateGamesList();
             return response("Created game " + gameName);
         }
         throw new ResponseException(400, "Expected: <gamename>");
     }
 
     private String listGames() throws ResponseException {
-        populateGamesList();
+        updateGamesList();
         StringBuilder gamesList = new StringBuilder();
         for (var key : games.keySet()) {
             var game = games.get(key);
@@ -101,7 +102,7 @@ public class PostloginClient extends Client {
         throw new ResponseException(400, "Expected: <gameid>");
     }
 
-    private void populateGamesList() throws ResponseException {
+    private void updateGamesList() throws ResponseException {
         this.games = new HashMap<>();
         this.gamesKeysToIDs = new HashMap<>();
         var games = server.listGames();
