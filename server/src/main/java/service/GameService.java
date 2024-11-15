@@ -10,10 +10,19 @@ import model.request.RequestWithAuth;
 import model.result.*;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Objects;
 
 public class GameService extends AuthService implements Service {
-    private int gameIDCtr = 1;
+    private int gameIDCtr;
+
+    public GameService() {
+        try {
+            gameIDCtr = 1 + GAME_DAO.listGames().stream().map(GameData::gameID).max(Comparator.naturalOrder()).get();
+        } catch (Exception ignore) {
+            gameIDCtr = 1;
+        }
+    }
 
     public Result listGames(ListGamesRequest listGamesRequest) {
         if (!AUTH_DAO.existsAuth(listGamesRequest.authToken())) {
