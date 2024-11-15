@@ -57,6 +57,7 @@ public class PreloginClient extends Client {
             var password = params[1];
             var email = params[2];
             server.register(username, password, email);
+            advanceClient();
             return response(String.format("You registered and signed in as %s.", username));
         }
         throw new ResponseException(400, "Expected: <username> <password> <email>");
