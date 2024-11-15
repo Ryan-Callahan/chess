@@ -82,14 +82,14 @@ public class GameBoardUI {
         return coords.toString();
     }
 
-    private String drawInfoHeader() {
-        StringBuilder gameInfo = new StringBuilder();
-        gameInfo.append(SET_BG_COLOR_LIGHT_GREY);
-        gameInfo.append(SET_TEXT_BOLD + SET_TEXT_UNDERLINE);
-        gameInfo.append(gameName.toUpperCase());
-        gameInfo.append(reset());
-        return gameInfo.toString();
-    }
+//    private String drawInfoHeader() {
+//        StringBuilder gameInfo = new StringBuilder();
+//        gameInfo.append(SET_BG_COLOR_LIGHT_GREY);
+//        gameInfo.append(SET_TEXT_BOLD + SET_TEXT_UNDERLINE);
+//        gameInfo.append(gameName.toUpperCase());
+//        gameInfo.append(reset());
+//        return gameInfo.toString();
+//    }
 
     private String drawHorizontalLine() {
         return SET_BG_COLOR_BLACK + EMPTY.repeat(8) + " ".repeat(6) + reset() + "\n";
