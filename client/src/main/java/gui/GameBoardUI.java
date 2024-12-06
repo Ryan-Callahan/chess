@@ -1,23 +1,19 @@
 package gui;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
 import model.GameData;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.Vector;
+import java.util.*;
 
 import static gui.EscapeSequences.*;
+
 
 public class GameBoardUI {
     private final ChessGame game;
     private final String gameName;
     private final String whiteUsername;
     private final String blackUsername;
+    private Collection<ChessPosition> validPositions = new HashSet<>();
 
     public GameBoardUI(GameData gameData) {
         this.game = gameData.game();
@@ -31,6 +27,20 @@ public class GameBoardUI {
                 drawGameBoard(game.getBoard(), true) +
                 drawHorizontalLine() +
                 drawGameBoard(game.getBoard(), false);
+    }
+
+    public String renderPlayer(ChessGame.TeamColor color) {
+        var reversed = false;
+        if (color == ChessGame.TeamColor.BLACK) {
+            reversed = true;
+        }
+        return RESET_TEXT_COLOR +
+                drawGameBoard(game.getBoard(), reversed);
+    }
+
+    public String renderHighlightedMoves(ChessGame.TeamColor color, Collection<ChessPosition> validPositions) {
+        this.validPositions = validPositions;
+        return renderPlayer(color);
     }
 
     private String drawGameBoard(ChessBoard board, Boolean reversed) {
@@ -101,6 +111,9 @@ public class GameBoardUI {
     }
 
     private String getSquareColor(int row, int col) {
+        if (validPositions.contains(new ChessPosition(row, col))) {
+            return getHighlightedSquareColor(row, col);
+        }
         if (row % 2 == 0) {
             if (col % 2 == 0) {
                 return SET_BG_COLOR_BLACK;
@@ -111,6 +124,20 @@ public class GameBoardUI {
                 return SET_BG_COLOR_WHITE;
             }
             return SET_BG_COLOR_BLACK;
+        }
+    }
+
+    private String getHighlightedSquareColor(int row, int col) {
+        if (row % 2 == 0) {
+            if (col % 2 == 0) {
+                return SET_BG_COLOR_DARK_GREEN;
+            }
+            return SET_TEXT_COLOR_GREEN;
+        } else {
+            if (col % 2 == 0) {
+                return SET_BG_COLOR_GREEN;
+            }
+            return SET_BG_COLOR_DARK_GREEN;
         }
     }
 
