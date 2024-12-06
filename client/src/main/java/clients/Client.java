@@ -1,7 +1,5 @@
 package clients;
 
-import server.ServerFacade;
-
 import static clients.ClientType.*;
 
 public abstract class Client {

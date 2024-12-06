@@ -1,7 +1,5 @@
 package clients;
 
-import server.ServerFacade;
-
 import static clients.ClientType.IN_GAME;
 
 public class GameplayClient extends Client {

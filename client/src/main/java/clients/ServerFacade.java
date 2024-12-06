@@ -1,4 +1,4 @@
-package server;
+package clients;
 
 import exception.ResponseException;
 import model.GameData;
