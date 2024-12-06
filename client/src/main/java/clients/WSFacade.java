@@ -4,6 +4,7 @@ import chess.ChessMove;
 import model.GameData;
 import serializer.GSerializer;
 import websocket.WSClient;
+import websocket.commands.ConnectCommand;
 import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 
@@ -29,7 +30,7 @@ public class WSFacade {
     }
 
     public void connect() throws Exception {
-        var message = new UserGameCommand(CONNECT, server.getAuthToken(), game.gameID());
+        var message = new ConnectCommand(server.getAuthToken(), game.gameID(), server.getColor());
         wsClient.send(GSerializer.serialize(message));
     }
 

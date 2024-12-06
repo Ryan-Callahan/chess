@@ -2,42 +2,21 @@ package server.websocket;
 
 import org.eclipse.jetty.websocket.api.Session;
 
-import java.io.IOException;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ConnectionManager {
-    private int gameID;
-    private Session session;
-    private final ConcurrentHashMap<String, Connection> userConnections = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Integer, GameSession> connections = new ConcurrentHashMap<>();
 
-    public ConnectionManager(Session session, int gameID) {
-        this.session = session;
-        this.gameID = gameID;
+    public void addGame(Session session, int gameID) {
+        var game = new GameSession(session, gameID);
+        connections.put(gameID, game);
     }
 
-    public void addUserConnection(Session session, String username, String authToken) {
-        var userConnection = new Connection(session, username, authToken);
-        userConnections.put(authToken, userConnection);
+    public void removeGame(int gameID) {
+        connections.remove(gameID);
     }
 
-    public void removeUserConnection(String authToken) {
-        userConnections.remove(authToken);
-    }
-
-    public Connection getUserConnection(String authToken) {
-        return userConnections.get(authToken);
-    }
-
-    public void broadcast(String excludeAuthToken, String message) throws IOException {
-        for (var user : userConnections.values()) {
-            if (!Objects.equals(user.getAuthToken(), excludeAuthToken)) {
-                user.send(message);
-            }
-        }
-    }
-
-    public void messageUser(String authToken, String message) throws IOException {
-        userConnections.get(authToken).send(message);
+    public GameSession getGameSession(int gameID) {
+        return connections.get(gameID);
     }
 }

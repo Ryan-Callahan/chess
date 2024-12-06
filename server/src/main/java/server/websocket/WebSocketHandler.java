@@ -1,11 +1,13 @@
 package server.websocket;
 
+import chess.ChessGame;
 import dataaccess.DataAccessException;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import serializer.GSerializer;
 import service.Service;
+import websocket.commands.ConnectCommand;
 import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 import websocket.messages.LoadGameMessage;
@@ -17,7 +19,7 @@ import static websocket.messages.NotificationMessage.NotificationType.CONNECTION
 
 @WebSocket
 public class WebSocketHandler {
-    private final GameSessions connections = new GameSessions();
+    private final ConnectionManager connections = new ConnectionManager();
 
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws Exception {
@@ -25,7 +27,10 @@ public class WebSocketHandler {
         switch (command.getCommandType()) {
             case LEAVE -> leave(command);
             case RESIGN -> resign(command);
-            case CONNECT -> connect(session, command);
+            case CONNECT -> {
+                ConnectCommand connectCommand = getConnectionCommand(message);
+                connect(session, connectCommand);
+            }
             case MAKE_MOVE -> {
                 MakeMoveCommand makeMoveCommand = GSerializer.deserialize(message, MakeMoveCommand.class);
                 makeMove(makeMoveCommand);
@@ -33,7 +38,7 @@ public class WebSocketHandler {
         }
     }
 
-    private void connect(Session session, UserGameCommand command) throws IOException, DataAccessException {
+    private void connect(Session session, ConnectCommand command) throws IOException, DataAccessException {
         if (connections.getGameSession(command.getGameID()) == null) {
             connections.addGame(session, command.getGameID());
         }
@@ -41,13 +46,16 @@ public class WebSocketHandler {
 
         var username = Service.AUTH_DAO.getAuthByToken(command.getAuthToken()).username();
         var authToken = command.getAuthToken();
+        var teamColor = command.getColor();
         if (gameSession.getUserConnection(authToken) == null) {
-            gameSession.addUserConnection(session, username, authToken);
+            gameSession.addUserConnection(session, username, authToken, teamColor);
         }
+
+        //todo verify that user can join that color
 
         var gameData = Service.GAME_DAO.getGame(command.getGameID());
         var loadGameMessage = new LoadGameMessage(gameData);
-        var notificationMessage = new NotificationMessage(CONNECTION, username);
+        var notificationMessage = getConnectionNotification(username, teamColor);
         gameSession.messageUser(command.getAuthToken(), GSerializer.serialize(loadGameMessage));
         gameSession.broadcast(command.getAuthToken(), GSerializer.serialize(notificationMessage));
     }
@@ -62,5 +70,22 @@ public class WebSocketHandler {
 
     private void leave(UserGameCommand command) {
 
+    }
+
+    private NotificationMessage getConnectionNotification(String username, ChessGame.TeamColor color) {
+        String payload = username;
+        if (color != null) {
+            payload = payload + "|||" + color;
+        }
+        return new NotificationMessage(CONNECTION, payload);
+    }
+
+    private ConnectCommand getConnectionCommand(String message) {
+        if (message.contains("\"color\"")) {
+            return GSerializer.deserialize(message, ConnectCommand.class);
+        } else {
+            var command = GSerializer.deserialize(message, UserGameCommand.class);
+            return new ConnectCommand(command.getAuthToken(), command.getGameID(), null);
+        }
     }
 }
