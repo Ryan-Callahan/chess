@@ -10,6 +10,7 @@ import model.request.RegisterRequest;
 import model.result.ListGamesResult;
 import model.result.LoginResult;
 import serializer.GSerializer;
+import websocket.WSClient;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,6 +23,18 @@ import java.util.Collection;
 
 public class ServerFacade {
     private final String serverUrl;
+        private String authToken = null;
+    private String username = null;
+    private ChessGame.TeamColor color = null;
+    private WSFacade ws = null;
+
+    public ServerFacade(String serverUrl) {
+        this.serverUrl = serverUrl;
+    }
+
+    public String getServerUrl() {
+        return serverUrl;
+    }
 
     public String getAuthToken() {
         return authToken;
@@ -35,12 +48,13 @@ public class ServerFacade {
         return color;
     }
 
-    private String authToken = null;
-    private String username = null;
-    private ChessGame.TeamColor color = null;
+    public WSFacade initWebSocket(GameData game) throws Exception {
+        this.ws = new WSFacade(serverUrl, this, game);
+        return this.ws;
+    }
 
-    public ServerFacade(String serverUrl) {
-        this.serverUrl = serverUrl;
+    public WSFacade getWebSocket() {
+        return this.ws;
     }
 
     public void register(String username, String password, String email) throws ResponseException {

@@ -19,7 +19,7 @@ public class WSClient extends Endpoint {
     public Session session;
     public ServerFacade server;
 
-    public WSClient(String url, ServerFacade server, NotificationHandler notificationHandler) throws Exception {
+    public WSClient(String url, ServerFacade server) throws Exception {
         try {
             this.server = server;
             url = url.replace("http", "ws");
@@ -51,6 +51,10 @@ public class WSClient extends Endpoint {
         } catch (DeploymentException | IOException | URISyntaxException ex) {
             throw new ResponseException(500, ex.getMessage());
         }
+    }
+
+    public void send(String message) throws Exception {
+        session.getBasicRemote().sendText(message);
     }
 
     @Override
