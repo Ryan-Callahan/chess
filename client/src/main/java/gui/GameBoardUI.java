@@ -38,8 +38,8 @@ public class GameBoardUI {
                 drawGameBoard(game.getBoard(), reversed);
     }
 
-    public String renderHighlightedMoves(ChessGame.TeamColor color, Collection<ChessPosition> validPositions) {
-        this.validPositions = validPositions;
+    public String renderHighlightedMoves(ChessGame.TeamColor color, ChessPosition position) {
+        this.validPositions = game.validMoves(position).stream().map(ChessMove::getEndPosition).toList();
         return renderPlayer(color);
     }
 

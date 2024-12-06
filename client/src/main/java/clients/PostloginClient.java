@@ -3,6 +3,7 @@ package clients;
 import exception.ResponseException;
 import model.GameData;
 import gui.GameBoardUI;
+import websocket.WSClient;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -82,21 +83,25 @@ public class PostloginClient extends Client {
         return response(gamesList.toString());
     }
 
-    private String playGame(String... params) throws ResponseException {
+    private String playGame(String... params) throws Exception {
         if (params.length == 2) {
             var gameID = getGameID(Integer.parseInt(params[0]));
             var teamColor = params[1];
             var game = server.observeGame(gameID);
             server.joinGame(teamColor, gameID);
+            var ws = server.initWebSocket(game);
+            ws.connect();
             return response(new GameBoardUI(game).renderGame());
         }
         throw new ResponseException(400, "Expected: <gameid> <teamcolor>");
     }
 
-    private String observeGame(String... params) throws ResponseException {
+    private String observeGame(String... params) throws Exception {
         if (params.length == 1) {
             var gameID = getGameID(Integer.parseInt(params[0]));
             var game = server.observeGame(gameID);
+            var ws = server.initWebSocket(game);
+            ws.connect();
             return response(new GameBoardUI(game).renderGame());
         }
         throw new ResponseException(400, "Expected: <gameid>");

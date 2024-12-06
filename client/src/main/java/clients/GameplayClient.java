@@ -1,14 +1,23 @@
 package clients;
 
+import chess.ChessMove;
+import chess.ChessPosition;
+import gui.GameBoardUI;
+import websocket.WSClient;
+
 import java.io.IOException;
 import java.util.Arrays;
 
 import static clients.ClientType.IN_GAME;
 
 public class GameplayClient extends Client {
-    public GameplayClient(ServerFacade server) {
+    private WSFacade ws;
+    private int gameID;
+    public GameplayClient(ServerFacade server) throws Exception {
         super(server);
         currentClient = IN_GAME;
+        ws = server.getWebSocket();
+        this.gameID = ws.getGameID();
     }
 
     @Override
@@ -43,19 +52,32 @@ public class GameplayClient extends Client {
     }
 
     private String redrawBoard() {
+        System.out.println(new GameBoardUI(ws.getGame()).renderPlayer(server.getColor()));
+        return response("");
     }
 
-    private String leave() throws IOException {
-
+    private String leave() throws Exception {
+        ws.leave();
+        demoteClient();
+        return response("left the game");
     }
 
-    private String makeMove(String... params) throws IOException {
+    private String makeMove(String... params) throws Exception {
+        var move = new ChessMove(params[0]);
+        //todo validate move
+        ws.makeMove(move);
+        return move.toString();
     }
 
-    private String resign(String... params) throws IOException {
+    private String resign(String... params) throws Exception {
+        ws.resign();
+        return response("resigned");
     }
 
     private String highlightLegalMoves(String... params) throws IOException {
-
+        var position = new ChessPosition(params[0]);
+        var highlightedMoves = new GameBoardUI(ws.getGame()).renderHighlightedMoves(server.getColor(), position);
+        System.out.println(highlightedMoves);
+        return response("");
     }
 }

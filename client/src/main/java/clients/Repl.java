@@ -54,7 +54,7 @@ public class Repl {
         System.out.printf("\n%s[%s]>>> %s", RESET_TEXT_COLOR, currentClientType, SET_TEXT_COLOR_GREEN);
     }
 
-    private void checkClient(ClientType newType) throws ResponseException {
+    private void checkClient(ClientType newType) throws Exception {
         if (newType != currentClientType) {
             client = switch (newType) {
                 case LOGGED_OUT -> new PreloginClient(server);
