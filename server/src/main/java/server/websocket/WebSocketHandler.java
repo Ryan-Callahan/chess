@@ -11,7 +11,7 @@ import java.io.IOException;
 
 @WebSocket
 public class WebSocketHandler {
-    private final ConnectionManager connections = new ConnectionManager();
+    private final GameSessions connections = new GameSessions();
 
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws IOException {
