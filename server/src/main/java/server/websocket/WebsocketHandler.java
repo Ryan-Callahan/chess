@@ -55,33 +55,38 @@ public class WebsocketHandler {
         }
     }
 
-    private void connect(Session session, String username, UserGameCommand command) throws DataAccessException {
-        connections.sendMessage(username, new LoadGameMessage(command.getGameID()));
+    private void connect(Session session, String username, UserGameCommand command) throws DataAccessException, IOException {
+        connections.sendMessage(username, new LoadGameMessage(getGame(command.getGameID())));
         connections.sendMessage(username, getJoinMessage(username, command));
     }
 
-    private void makeMove(Session session, String username, MakeMoveCommand command) {
+    private void makeMove(Session session, String username, MakeMoveCommand command) throws IOException {
         String move = GSerializer.serialize(command.getMove());
+
         connections.sendMessage(username, new NotificationMessage(MOVE, move + "|||" + username));
     }
 
-    private void leaveGame(Session session, String username, UserGameCommand command) {
+    private void leaveGame(Session session, String username, UserGameCommand command) throws IOException {
         connections.remove(username);
         connections.sendMessage(username, new NotificationMessage(LEAVE, username));
 
     }
 
-    private void resign(Session session, String username, UserGameCommand command) {
+    private void resign(Session session, String username, UserGameCommand command) throws IOException {
         connections.remove(username);
         connections.sendMessage(null, new NotificationMessage(RESIGN, username));
     }
 
     private NotificationMessage getJoinMessage(String username, UserGameCommand command) throws DataAccessException {
-        GameData game = Service.GAME_DAO.getGame(command.getGameID());
+        var game = getGame(command.getGameID());
         if (Objects.equals(game.whiteUsername(), username) || Objects.equals(game.blackUsername(), username)) {
             return new NotificationMessage(JOIN, username);
         } else {
             return new NotificationMessage(OBSERVE, username);
         }
+    }
+
+    private GameData getGame(int gameID) throws DataAccessException {
+        return Service.GAME_DAO.getGame(gameID);
     }
 }
