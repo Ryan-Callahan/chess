@@ -71,6 +71,7 @@ public class GameplayClient extends Client {
 
     private String resign(String... params) throws Exception {
         ws.resign();
+        //todo resign from game
         return response("resigned");
     }
 

@@ -1,7 +1,6 @@
 package websocket;
 
 import clients.ServerFacade;
-import com.sun.nio.sctp.NotificationHandler;
 import exception.ResponseException;
 import gui.GameBoardUI;
 import serializer.GSerializer;
@@ -62,7 +61,7 @@ public class WSClient extends Endpoint {
     }
 
     private void loadGame(LoadGameMessage loadGameMessage) {
-        printString(new GameBoardUI(loadGameMessage.getGameData()).renderPlayer(server.getColor()));
+        printString(new GameBoardUI(loadGameMessage.getGame()).renderPlayer(server.getColor()));
     }
 
     private void handleNotification(NotificationMessage notificationMessage) {

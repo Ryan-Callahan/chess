@@ -51,8 +51,6 @@ public class WebSocketHandler {
             gameSession.addUserConnection(session, username, authToken, teamColor);
         }
 
-        //todo verify that user can join that color
-
         var gameData = Service.GAME_DAO.getGame(command.getGameID());
         var loadGameMessage = new LoadGameMessage(gameData);
         var notificationMessage = getConnectionNotification(username, teamColor);
