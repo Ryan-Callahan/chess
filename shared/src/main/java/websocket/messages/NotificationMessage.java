@@ -11,7 +11,6 @@ public class NotificationMessage extends ServerMessage {
 
     public enum NotificationType {
         CONNECTION,
-        OBSERVATION,
         MOVE,
         LEAVE,
         RESIGN,
@@ -19,21 +18,20 @@ public class NotificationMessage extends ServerMessage {
         CHECKMATE
     }
 
-    public NotificationMessage(NotificationType type, String username) {
+    public NotificationMessage(NotificationType type, String username, String message) {
         super(NOTIFICATION);
         this.type = type;
-        this.message = generateMessage(username);
+        this.message = generateMessage(username, message);
     }
 
-    public String generateMessage(String username) {
+    public String generateMessage(String username, String message) {
         return switch (type) {
-            case CONNECTION -> getConnectionType(username);
-            case OBSERVATION -> null;
-            case MOVE -> null;
-            case LEAVE -> null;
-            case RESIGN -> null;
-            case CHECK -> null;
-            case CHECKMATE -> null;
+            case CONNECTION -> getConnectionType(username, message);
+            case MOVE -> String.format("%s has made a move: %s", username, message);
+            case LEAVE -> String.format("%s has left the game.", username);
+            case RESIGN -> String.format("%s has forfeit the game.", username);
+            case CHECK -> String.format("%s is in check.", username);
+            case CHECKMATE -> String.format("%s is in checkmate.", username);
         };
     }
 
@@ -45,15 +43,14 @@ public class NotificationMessage extends ServerMessage {
         return this.type;
     }
 
-    private String getConnectionType(String message) {
-        var parts = message.split("\\|\\|\\|");
-        if (parts.length > 1) {
-            return switch (ChessGame.TeamColor.valueOf(parts[1].toUpperCase())) {
-                case WHITE -> parts[0] + " has joined as white team.";
-                case BLACK -> parts[0] + " has joined as black team.";
+    private String getConnectionType(String username, String message) {
+        if (message != null) {
+            return switch (ChessGame.TeamColor.valueOf(message.toUpperCase())) {
+                case WHITE -> username + " has joined as white team.";
+                case BLACK -> username + " has joined as black team.";
             };
         } else {
-            return message + " started observing the game.";
+            return username + " started observing the game.";
         }
     }
 }

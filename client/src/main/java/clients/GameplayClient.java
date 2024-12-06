@@ -64,7 +64,6 @@ public class GameplayClient extends Client {
 
     private String makeMove(String... params) throws Exception {
         var move = new ChessMove(params[0]);
-        //todo validate move
         ws.makeMove(move);
         return move.toString();
     }

@@ -1,11 +1,15 @@
 package server.websocket;
 
 import chess.ChessGame;
+import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
 
 import java.io.IOException;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static chess.ChessGame.TeamColor.BLACK;
+import static chess.ChessGame.TeamColor.WHITE;
 
 public class GameSession {
     private int gameID;
@@ -19,15 +23,9 @@ public class GameSession {
         this.gameID = gameID;
     }
 
-    public void addUserConnection(Session session, String username, String authToken, ChessGame.TeamColor color) {
+    public void addUserConnection(Session session, String username, String authToken) {
         var userConnection = new Connection(session, username, authToken);
         userConnections.put(authToken, userConnection);
-        if (color != null) {
-            switch (color) {
-                case WHITE -> whitePlayer = authToken;
-                case BLACK -> blackPlayer = authToken;
-            }
-        }
     }
 
     public void removeUserConnection(String authToken) {
@@ -48,5 +46,21 @@ public class GameSession {
 
     public void messageUser(String authToken, String message) throws IOException {
         userConnections.get(authToken).send(message);
+    }
+
+    public ChessGame.TeamColor getUserColor(String authToken) {
+        var username = getUserConnection(authToken).getUsername();
+        if (Objects.equals(username, whitePlayer)) {
+            return WHITE;
+        } else if (Objects.equals(username, blackPlayer)) {
+            return BLACK;
+        } else {
+            return null;
+        }
+    }
+
+    public void updateTeams(GameData gameData) {
+        whitePlayer = gameData.whiteUsername();
+        blackPlayer = gameData.blackUsername();
     }
 }
