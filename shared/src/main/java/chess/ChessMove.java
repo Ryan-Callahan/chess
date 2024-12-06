@@ -25,7 +25,7 @@ public class ChessMove {
         this.startPosition = new ChessPosition(parts[0]);
         this.endPosition = new ChessPosition(parts[1]);
         if (parts.length > 2) {
-            this.promotionPiece = ChessPiece.PieceType.valueOf(parts[2]);
+            this.promotionPiece = ChessPiece.PieceType.valueOf(parts[2].toUpperCase());
         } else {
             this.promotionPiece = null;
         }

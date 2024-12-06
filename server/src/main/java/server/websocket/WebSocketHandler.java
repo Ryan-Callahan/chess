@@ -82,11 +82,6 @@ public class WebSocketHandler {
             var moveNotification = new NotificationMessage(MOVE, username, chessMove.toString());
             gameSession.broadcast(null, GSerializer.serialize(loadMessage));
             gameSession.broadcast(command.getAuthToken(), GSerializer.serialize(moveNotification));
-            //todo validate move
-            //update game
-            //send load message to root
-            //send notification to all other clients
-            //if in check or checkmate, send to all clients
         } catch (Exception ex) {
             sendErrorToRootClient(session, ex.getMessage());
         }
