@@ -34,6 +34,12 @@ public class ChessPosition {
         return Objects.hash(row, col);
     }
 
+    @Override
+    public String toString() {
+        var alphaList = new String[]{"A", "B", "C", "D", "E", "F", "G", "H"};
+        return String.format("%s%s", alphaList[row-1], col);
+    }
+
     /**
      * @return which row this position is in
      * 1 codes for the bottom row
