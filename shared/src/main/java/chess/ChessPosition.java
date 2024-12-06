@@ -17,6 +17,12 @@ public class ChessPosition {
         this.col = col;
     }
 
+    public ChessPosition(String position) {
+        String[] positions = position.split("");
+        this.col = ChessUtils.alphaToInt.get(positions[0].toUpperCase());
+        this.row = Integer.parseInt(positions[1]);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -32,6 +38,11 @@ public class ChessPosition {
     @Override
     public int hashCode() {
         return Objects.hash(row, col);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s%s", ChessUtils.alphaCoords[col-1], row);
     }
 
     /**

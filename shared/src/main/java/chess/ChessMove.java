@@ -20,6 +20,17 @@ public class ChessMove {
         this.promotionPiece = promotionPiece;
     }
 
+    public ChessMove(String move) {
+        String[] parts = move.split(":");
+        this.startPosition = new ChessPosition(parts[0]);
+        this.endPosition = new ChessPosition(parts[1]);
+        if (parts.length > 2) {
+            this.promotionPiece = ChessPiece.PieceType.valueOf(parts[2]);
+        } else {
+            this.promotionPiece = null;
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -37,6 +48,11 @@ public class ChessMove {
     @Override
     public int hashCode() {
         return Objects.hash(startPosition, endPosition, promotionPiece);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s:%s", startPosition.toString(), endPosition.toString());
     }
 
     /**

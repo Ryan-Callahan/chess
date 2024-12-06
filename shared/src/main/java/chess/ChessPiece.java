@@ -79,12 +79,12 @@ public class ChessPiece {
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         return switch (type) {
-            case ROOK -> PieceMoveService.calculateMoves(board, myPosition, Directions.lateralDirections, true);
-            case BISHOP -> PieceMoveService.calculateMoves(board, myPosition, Directions.diagonalDirections, true);
-            case QUEEN -> PieceMoveService.calculateMoves(board, myPosition, Directions.omniDirections, true);
-            case KNIGHT -> PieceMoveService.calculateMoves(board, myPosition, Directions.knightDirections);
-            case KING -> PieceMoveService.calculateMoves(board, myPosition, Directions.omniDirections);
-            case PAWN -> PieceMoveService.calculatePawnMoves(board, myPosition, Directions.pawnDirections);
+            case ROOK -> PieceMoveService.calculateMoves(board, myPosition, ChessUtils.lateralDirections, true);
+            case BISHOP -> PieceMoveService.calculateMoves(board, myPosition, ChessUtils.diagonalDirections, true);
+            case QUEEN -> PieceMoveService.calculateMoves(board, myPosition, ChessUtils.omniDirections, true);
+            case KNIGHT -> PieceMoveService.calculateMoves(board, myPosition, ChessUtils.knightDirections);
+            case KING -> PieceMoveService.calculateMoves(board, myPosition, ChessUtils.omniDirections);
+            case PAWN -> PieceMoveService.calculatePawnMoves(board, myPosition, ChessUtils.pawnDirections);
         };
     }
 }
