@@ -1,7 +1,6 @@
 package clients;
 
 import exception.ResponseException;
-import server.ServerFacade;
 
 import java.util.Scanner;
 
@@ -9,7 +8,7 @@ import static clients.ClientType.LOGGED_OUT;
 import static ui.EscapeSequences.*;
 
 public class Repl {
-    private Client client;
+    public Client client;
     private ClientType currentClientType;
     private final ServerFacade server;
 
@@ -17,7 +16,7 @@ public class Repl {
     public Repl(String serverUrl) {
         currentClientType = LOGGED_OUT;
         server = new ServerFacade(serverUrl);
-        client = new PreloginClient(server);
+        client = new PreloginClient(server, serverUrl);
 
     }
 
@@ -58,9 +57,9 @@ public class Repl {
     private void checkClient(ClientType newType) throws ResponseException {
         if (newType != currentClientType) {
             client = switch (newType) {
-                case LOGGED_OUT -> new PreloginClient(server);
-                case LOGGED_IN -> new PostloginClient(server);
-                case IN_GAME -> new GameplayClient(server);
+                case LOGGED_OUT -> new PreloginClient(server, client.serverUrl);
+                case LOGGED_IN -> new PostloginClient(server, client.serverUrl);
+                case IN_GAME -> new GameplayClient(server, client.serverUrl, client.ws);
             };
             currentClientType = newType;
         }

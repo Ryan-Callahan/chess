@@ -1,15 +1,14 @@
 package clients;
 
 import exception.ResponseException;
-import server.ServerFacade;
 
 import java.util.Arrays;
 
 import static clients.ClientType.LOGGED_OUT;
 
 public class PreloginClient extends Client {
-    public PreloginClient(ServerFacade server) {
-        super(server);
+    public PreloginClient(ServerFacade server, String serverUrl) {
+        super(server, serverUrl);
         currentClient = LOGGED_OUT;
     }
 

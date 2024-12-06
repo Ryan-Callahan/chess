@@ -1,5 +1,6 @@
-package server;
+package clients;
 
+import chess.ChessGame;
 import exception.ResponseException;
 import model.GameData;
 import model.request.CreateGameRequest;
@@ -18,31 +19,64 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.util.Collection;
+import java.util.Objects;
 
 public class ServerFacade {
     private final String serverUrl;
     private String authToken = null;
+    private GameData game = null;
+    private String username = null;
 
     public ServerFacade(String serverUrl) {
         this.serverUrl = serverUrl;
+    }
+
+    public String getAuthToken() {
+        return authToken;
+    }
+
+    public GameData getCurrentGame() {
+        try {
+            return observeGame(game.gameID());
+        } catch (Exception ignored) {
+            return null;
+        }
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public ChessGame.TeamColor getTeamColor() {
+        if (Objects.equals(username, game.blackUsername())) {
+            return ChessGame.TeamColor.BLACK;
+        } else if (Objects.equals(username, game.whiteUsername())) {
+            return ChessGame.TeamColor.WHITE;
+        } else {
+            return null;
+        }
     }
 
     public void register(String username, String password, String email) throws ResponseException {
         var path = "/user";
         var registerRequest = new RegisterRequest(username, password, email);
         authToken = makeRequest("POST", path, registerRequest, LoginResult.class).authToken();
+        this.username = username;
     }
 
     public void login(String username, String password) throws ResponseException {
         var path = "/session";
         var loginRequest = new LoginRequest(username, password);
         authToken = makeRequest("POST", path, loginRequest, LoginResult.class).authToken();
+        this.username = username;
     }
 
     public void logout() throws ResponseException {
         var path = "/session";
         makeRequest("DELETE", path, null, null);
         expireAuthToken();
+        username = null;
+        authToken = null;
     }
 
     public void createGame(String gameName) throws ResponseException {
@@ -60,12 +94,14 @@ public class ServerFacade {
         var path = "/game";
         var joinGameRequest = new JoinGameRequest(playerColor, gameID);
         makeRequest("PUT", path, joinGameRequest, null);
+        observeGame(gameID);
     }
 
     public GameData observeGame(int gameID) throws ResponseException {
         var games = listGames();
         try {
-            return games.stream().filter(gameData -> gameData.gameID() == gameID).findFirst().get();
+            this.game = games.stream().filter(gameData -> gameData.gameID() == gameID).findFirst().get();
+            return game;
         } catch (Exception e) {
             throw new ResponseException(400, e.getMessage());
         }

@@ -1,8 +1,12 @@
 package server.websocket;
 
 import org.eclipse.jetty.websocket.api.Session;
-import websocket.messages.ServerMessage;
+import serializer.GSerializer;
+import websocket.messages.ErrorMessage;
+import websocket.messages.LoadGameMessage;
+import websocket.messages.NotificationMessage;
 
+import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ConnectionManager {
@@ -17,7 +21,19 @@ public class ConnectionManager {
         connections.remove(username);
     }
 
-    public void sendMessage(String excludeUsername, ServerMessage serverMessage) {
+    public void sendMessage(String username, NotificationMessage notificationMessage) throws IOException {
+        for (var connection : connections.values()) {
+            if (!connection.getUsername().equals(username)) {
+                connection.send(GSerializer.serialize(notificationMessage));
+            }
+        }
+    }
 
+    public void sendMessage(String username, LoadGameMessage loadGameMessage) throws IOException {
+        connections.get(username).send(GSerializer.serialize(loadGameMessage));
+    }
+
+    public void sendMessage(Session session, ErrorMessage errorMessage) throws IOException {
+        session.getRemote().sendString(errorMessage.getErrorMessage());
     }
 }

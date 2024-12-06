@@ -2,21 +2,24 @@ package clients;
 
 import exception.ResponseException;
 import model.GameData;
-import server.ServerFacade;
+import serializer.GSerializer;
 import ui.GameBoardUI;
+import websocket.WSClient;
+import websocket.commands.UserGameCommand;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Objects;
 
 import static clients.ClientType.LOGGED_IN;
+import static websocket.commands.UserGameCommand.CommandType.CONNECT;
 
 public class PostloginClient extends Client {
     HashMap<Integer, GameData> games = new HashMap<>();
     HashMap<Integer, Integer> gamesKeysToIDs = new HashMap<>();
 
-    public PostloginClient(ServerFacade server) throws ResponseException {
-        super(server);
+    public PostloginClient(ServerFacade server, String serverUrl) throws ResponseException {
+        super(server, serverUrl);
         currentClient = LOGGED_IN;
         updateGamesList();
     }
@@ -83,21 +86,25 @@ public class PostloginClient extends Client {
         return response(gamesList.toString());
     }
 
-    private String playGame(String... params) throws ResponseException {
+    private String playGame(String... params) throws Exception {
         if (params.length == 2) {
             var gameID = getGameID(Integer.parseInt(params[0]));
             var teamColor = params[1];
             var game = server.observeGame(gameID);
             server.joinGame(teamColor, gameID);
+            connectWS(gameID);
+            advanceClient();
             return response(new GameBoardUI(game).renderGame());
         }
         throw new ResponseException(400, "Expected: <gameid> <teamcolor>");
     }
 
-    private String observeGame(String... params) throws ResponseException {
+    private String observeGame(String... params) throws Exception {
         if (params.length == 1) {
             var gameID = getGameID(Integer.parseInt(params[0]));
             var game = server.observeGame(gameID);
+            connectWS(gameID);
+            advanceClient();
             return response(new GameBoardUI(game).renderGame());
         }
         throw new ResponseException(400, "Expected: <gameid>");
@@ -121,5 +128,11 @@ public class PostloginClient extends Client {
             return gameID;
         }
         throw new ResponseException(400, "Game ID does not exist!");
+    }
+
+    private void connectWS(int gameID) throws Exception {
+        ws = new WSClient(serverUrl, server);
+        var connectionRequest = new UserGameCommand(CONNECT, server.getAuthToken(), gameID);
+        ws.send(GSerializer.serialize(connectionRequest));
     }
 }

@@ -1,15 +1,20 @@
 package clients;
 
-import server.ServerFacade;
+import websocket.NotificationHandler;
+import websocket.WSClient;
 
 import static clients.ClientType.*;
 
 public abstract class Client {
     protected ServerFacade server;
     protected ClientType currentClient;
+    protected NotificationHandler notificationHandler;
+    protected WSClient ws = null;
+    protected String serverUrl;
 
-    public Client(ServerFacade server) {
+    public Client(ServerFacade server, String serverUrl) {
         this.server = server;
+        this.serverUrl = serverUrl;
     }
 
     public abstract String help();

@@ -1,5 +1,6 @@
 package server.websocket;
 
+import chess.InvalidMoveException;
 import dataaccess.DataAccessException;
 import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
@@ -26,18 +27,23 @@ public class WebsocketHandler {
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws IOException {
         try {
-        UserGameCommand command = GSerializer.deserialize(message, UserGameCommand.class);
+            UserGameCommand command = GSerializer.deserialize(message, UserGameCommand.class);
 
-        String username = getUsername(command.getAuthToken());
+            String username = getUsername(command.getAuthToken());
 
-        saveSession(username, session);
+            saveSession(username, session);
 
-        switch (command.getCommandType()) {
-            case CONNECT -> connect(session, username, command);
-            case MAKE_MOVE -> makeMove(session, username, (MakeMoveCommand) command);
-            case LEAVE -> leaveGame(session, username,  command);
-            case RESIGN -> resign(session, username,  command);
-        }
+            if (message.contains("CONNECT")) {
+                connect(session, username, command);
+            } else if (message.contains("MAKE_MOVE")) {
+                makeMove(session, username, message);
+            } else if (message.contains("LEAVE")) {
+                leaveGame(session, username,  command);
+            } else if (message.contains("RESIGN")) {
+                resign(session, username,  command);
+            } else {
+                session.getRemote().sendString(message);
+            }
         } catch (DataAccessException ex) {
             connections.sendMessage(session, new ErrorMessage("Error: unauthorized"));
         } catch (Exception ex) {
@@ -60,10 +66,14 @@ public class WebsocketHandler {
         connections.sendMessage(username, getJoinMessage(username, command));
     }
 
-    private void makeMove(Session session, String username, MakeMoveCommand command) throws IOException {
-        String move = GSerializer.serialize(command.getMove());
-
-        connections.sendMessage(username, new NotificationMessage(MOVE, move + "|||" + username));
+    private void makeMove(Session session, String username, String message) throws IOException, DataAccessException, InvalidMoveException {
+        var command = GSerializer.deserialize(message, MakeMoveCommand.class);
+        var gameData = Service.GAME_DAO.getGame(command.getGameID());
+        var game = gameData.game();
+        game.makeMove(command.getMove());
+        var gameUpdate = new GameData(gameData.gameID(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), game);
+        Service.GAME_DAO.updateGame(gameUpdate);
+        connections.sendMessage(username, new NotificationMessage(MOVE, command.getMove() + "|||" + username));
     }
 
     private void leaveGame(Session session, String username, UserGameCommand command) throws IOException {

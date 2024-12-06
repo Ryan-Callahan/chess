@@ -11,7 +11,6 @@ import java.util.Objects;
 public class ChessPosition {
     private final int row;
     private final int col;
-    String[] alphaList = new String[]{"A", "B", "C", "D", "E", "F", "G", "H"};
 
     public ChessPosition(int row, int col) {
         this.row = row;
@@ -20,8 +19,8 @@ public class ChessPosition {
 
     public ChessPosition(String position) {
         var coordinates = position.split("");
-        this.row = coordinates[0].charAt(0) - 64;
-        this.col = Integer.parseInt(coordinates[1]);
+        this.col = coordinates[0].charAt(0) - 96;
+        this.row = Integer.parseInt(coordinates[1]);
     }
 
     @Override
@@ -44,7 +43,7 @@ public class ChessPosition {
     @Override
     public String toString() {
 
-        return String.format("%s%s", alphaList[row-1], col);
+        return String.format("%s%s", ChessUtils.alphaList[col-1], row);
     }
 
     /**
