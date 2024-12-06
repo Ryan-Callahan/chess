@@ -1,5 +1,6 @@
 package clients;
 
+import chess.ChessGame;
 import exception.ResponseException;
 import model.GameData;
 import model.request.CreateGameRequest;
@@ -21,7 +22,22 @@ import java.util.Collection;
 
 public class ServerFacade {
     private final String serverUrl;
+
+    public String getAuthToken() {
+        return authToken;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public ChessGame.TeamColor getColor() {
+        return color;
+    }
+
     private String authToken = null;
+    private String username = null;
+    private ChessGame.TeamColor color = null;
 
     public ServerFacade(String serverUrl) {
         this.serverUrl = serverUrl;
@@ -30,12 +46,14 @@ public class ServerFacade {
     public void register(String username, String password, String email) throws ResponseException {
         var path = "/user";
         var registerRequest = new RegisterRequest(username, password, email);
+        this.username = username;
         authToken = makeRequest("POST", path, registerRequest, LoginResult.class).authToken();
     }
 
     public void login(String username, String password) throws ResponseException {
         var path = "/session";
         var loginRequest = new LoginRequest(username, password);
+        this.username = username;
         authToken = makeRequest("POST", path, loginRequest, LoginResult.class).authToken();
     }
 
@@ -59,6 +77,7 @@ public class ServerFacade {
     public void joinGame(String playerColor, int gameID) throws ResponseException {
         var path = "/game";
         var joinGameRequest = new JoinGameRequest(playerColor, gameID);
+        this.color = ChessGame.TeamColor.valueOf(playerColor);
         makeRequest("PUT", path, joinGameRequest, null);
     }
 
@@ -131,6 +150,7 @@ public class ServerFacade {
     }
 
     private void expireAuthToken() {
+        username = null;
         authToken = null;
     }
 }

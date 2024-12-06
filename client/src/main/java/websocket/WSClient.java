@@ -1,7 +1,9 @@
 package websocket;
 
+import clients.ServerFacade;
 import com.sun.nio.sctp.NotificationHandler;
 import exception.ResponseException;
+import gui.GameBoardUI;
 import serializer.GSerializer;
 import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
@@ -15,9 +17,11 @@ import java.net.URISyntaxException;
 
 public class WSClient extends Endpoint {
     public Session session;
+    public ServerFacade server;
 
-    public WSClient(String url, NotificationHandler notificationHandler) throws Exception {
+    public WSClient(String url, ServerFacade server, NotificationHandler notificationHandler) throws Exception {
         try {
+            this.server = server;
             url = url.replace("http", "ws");
             URI socketURI = new URI(url + "/ws");
 
@@ -31,12 +35,15 @@ public class WSClient extends Endpoint {
                     switch (serverMessage.getServerMessageType()) {
                         case LOAD_GAME -> {
                             LoadGameMessage loadGameMessage = GSerializer.deserialize(message, LoadGameMessage.class);
+                            loadGame(loadGameMessage);
                         }
                         case NOTIFICATION -> {
                             NotificationMessage notificationMessage = GSerializer.deserialize(message, NotificationMessage.class);
+                            handleNotification(notificationMessage);
                         }
                         case ERROR -> {
                             ErrorMessage errorMessage = GSerializer.deserialize(message, ErrorMessage.class);
+                            handeError(errorMessage);
                         }
                     }
                 }
@@ -51,14 +58,14 @@ public class WSClient extends Endpoint {
     }
 
     private void loadGame(LoadGameMessage loadGameMessage) {
-
+        System.out.println(new GameBoardUI(loadGameMessage.getGameData()).renderPlayer(server.getColor()));
     }
 
     private void handleNotification(NotificationMessage notificationMessage) {
-
+        System.out.println(notificationMessage.getMessage());
     }
 
     private void handeError(ErrorMessage errorMessage) {
-
+        System.out.println(errorMessage.getErrorMessage());
     }
 }
