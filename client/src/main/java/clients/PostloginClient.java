@@ -3,7 +3,7 @@ package clients;
 import exception.ResponseException;
 import model.GameData;
 import server.ServerFacade;
-import ui.GameBoardUI;
+import gui.GameBoardUI;
 
 import java.util.Arrays;
 import java.util.HashMap;

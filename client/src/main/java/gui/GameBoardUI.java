@@ -1,4 +1,4 @@
-package ui;
+package gui;
 
 import chess.ChessBoard;
 import chess.ChessGame;
@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Vector;
 
-import static ui.EscapeSequences.*;
+import static gui.EscapeSequences.*;
 
 public class GameBoardUI {
     private final ChessGame game;

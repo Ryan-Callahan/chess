@@ -6,7 +6,7 @@ import server.ServerFacade;
 import java.util.Scanner;
 
 import static clients.ClientType.LOGGED_OUT;
-import static ui.EscapeSequences.*;
+import static gui.EscapeSequences.*;
 
 public class Repl {
     private Client client;
