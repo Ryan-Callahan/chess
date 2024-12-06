@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ConnectionManager {
     private int gameID;
     private Session session;
-    private final ConcurrentHashMap<String, UserConnection> userConnections = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Connection> userConnections = new ConcurrentHashMap<>();
 
     public ConnectionManager(Session session, int gameID) {
         this.session = session;
@@ -17,16 +17,16 @@ public class ConnectionManager {
     }
 
     public void addUserConnection(Session session, String username, String authToken) {
-        var userConnection = new UserConnection(session, username, authToken);
-        userConnections.put(username, userConnection);
+        var userConnection = new Connection(session, username, authToken);
+        userConnections.put(authToken, userConnection);
     }
 
-    public void removeUserConnection(String username) {
-        userConnections.remove(username);
+    public void removeUserConnection(String authToken) {
+        userConnections.remove(authToken);
     }
 
-    public UserConnection getUserConnection(String username) {
-        return userConnections.get(username);
+    public Connection getUserConnection(String authToken) {
+        return userConnections.get(authToken);
     }
 
     public void broadcast(String excludeUsername, String message) throws IOException {
