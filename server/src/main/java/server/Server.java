@@ -1,6 +1,7 @@
 package server;
 
 import model.request.*;
+import server.websocket.WebSocketHandler;
 import service.GameService;
 import service.UserService;
 import spark.Request;
@@ -18,6 +19,8 @@ public class Server {
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("web");
+
+        Spark.webSocket("/ws", WebSocketHandler.class);
 
         // Register your endpoints and handle exceptions here.
         Spark.delete("/db", this::clear);

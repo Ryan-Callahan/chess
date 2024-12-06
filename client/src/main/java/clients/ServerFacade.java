@@ -91,7 +91,7 @@ public class ServerFacade {
     public void joinGame(String playerColor, int gameID) throws ResponseException {
         var path = "/game";
         var joinGameRequest = new JoinGameRequest(playerColor, gameID);
-        this.color = ChessGame.TeamColor.valueOf(playerColor);
+        this.color = ChessGame.TeamColor.valueOf(playerColor.toUpperCase());
         makeRequest("PUT", path, joinGameRequest, null);
     }
 

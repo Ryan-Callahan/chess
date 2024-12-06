@@ -17,10 +17,10 @@ public class NotificationMessage extends ServerMessage {
         CHECKMATE
     }
 
-    public NotificationMessage(NotificationType type, String message) {
+    public NotificationMessage(NotificationType type, String username) {
         super(NOTIFICATION);
-        this.message = message;
         this.type = type;
+        this.message = username + " has " + type.toString();
     }
 
     public String getMessage() {

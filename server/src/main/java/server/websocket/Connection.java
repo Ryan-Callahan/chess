@@ -17,6 +17,10 @@ public class Connection {
         return this.username;
     }
 
+    public String getAuthToken() {
+        return authToken;
+    }
+
     public void send(String msg) throws IOException {
         session.getRemote().sendString(msg);
     }

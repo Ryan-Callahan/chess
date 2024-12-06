@@ -29,15 +29,15 @@ public class ConnectionManager {
         return userConnections.get(authToken);
     }
 
-    public void broadcast(String excludeUsername, String message) throws IOException {
+    public void broadcast(String excludeAuthToken, String message) throws IOException {
         for (var user : userConnections.values()) {
-            if (!Objects.equals(user.getUsername(), excludeUsername)) {
+            if (!Objects.equals(user.getAuthToken(), excludeAuthToken)) {
                 user.send(message);
             }
         }
     }
 
-    public void messageUser(String username, String message) throws IOException {
-        userConnections.get(username).send(message);
+    public void messageUser(String authToken, String message) throws IOException {
+        userConnections.get(authToken).send(message);
     }
 }

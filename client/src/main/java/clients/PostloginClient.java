@@ -91,6 +91,7 @@ public class PostloginClient extends Client {
             server.joinGame(teamColor, gameID);
             var ws = server.initWebSocket(game);
             ws.connect();
+            advanceClient();
             return response(new GameBoardUI(game).renderGame());
         }
         throw new ResponseException(400, "Expected: <gameid> <teamcolor>");
@@ -102,6 +103,7 @@ public class PostloginClient extends Client {
             var game = server.observeGame(gameID);
             var ws = server.initWebSocket(game);
             ws.connect();
+            advanceClient();
             return response(new GameBoardUI(game).renderGame());
         }
         throw new ResponseException(400, "Expected: <gameid>");

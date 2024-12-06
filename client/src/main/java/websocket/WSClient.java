@@ -62,14 +62,22 @@ public class WSClient extends Endpoint {
     }
 
     private void loadGame(LoadGameMessage loadGameMessage) {
-        System.out.println(new GameBoardUI(loadGameMessage.getGameData()).renderPlayer(server.getColor()));
+        printString(new GameBoardUI(loadGameMessage.getGameData()).renderPlayer(server.getColor()));
     }
 
     private void handleNotification(NotificationMessage notificationMessage) {
-        System.out.println(notificationMessage.getMessage());
+        printString(notificationMessage.getMessage());
     }
 
     private void handeError(ErrorMessage errorMessage) {
-        System.out.println(errorMessage.getErrorMessage());
+        printString(errorMessage.getErrorMessage());
+    }
+
+    private void printString(String message) {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("\n");
+        stringBuilder.append(message);
+        stringBuilder.append("\n[IN_GAME]>>> ");
+        System.out.printf(stringBuilder.toString());
     }
 }
