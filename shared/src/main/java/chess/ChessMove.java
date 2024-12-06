@@ -20,6 +20,17 @@ public class ChessMove {
         this.promotionPiece = promotionPiece;
     }
 
+    public ChessMove(String move) {
+        var positions = move.split(":");
+        this.startPosition = new ChessPosition(positions[0]);
+        this.endPosition = new ChessPosition(positions[1]);
+        if (positions.length > 2) {
+            this.promotionPiece = ChessPiece.PieceType.valueOf(positions[2]);
+        } else {
+            this.promotionPiece = null;
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
